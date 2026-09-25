@@ -1,0 +1,63 @@
+.notice-layer {
+  position: fixed;
+  inset: 0;
+  z-index: calc(var(--z-modal) + 10);
+  display: grid;
+  place-items: center;
+  padding: max(var(--gutter), var(--safe-left));
+  background:
+    radial-gradient(90% 60% at 50% 30%, rgb(22 71 53 / 0.55), transparent 70%),
+    var(--ink);
+}
+
+.notice {
+  width: 100%;
+  max-width: 380px;
+  padding: 22px;
+  border-radius: var(--r-xl);
+  background: var(--surface);
+  color: var(--text);
+  box-shadow: var(--shadow-lg);
+}
+
+.notice__icon {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  margin-bottom: 14px;
+  border-radius: var(--r-sm);
+  background: var(--yellow-18);
+  color: var(--accent-ink);
+}
+
+.notice__title {
+  font-size: var(--fs-17);
+  color: var(--text-strong);
+}
+
+.notice__body {
+  margin-top: 6px;
+  font-size: var(--fs-13);
+  line-height: 1.5;
+  color: var(--text-muted);
+}
+
+.notice__code {
+  margin-top: 14px;
+  padding: 12px 14px;
+  border-radius: var(--r-sm);
+  background: var(--green-900);
+  color: var(--ivory-70);
+  font-family: ui-monospace, "SF Mono", "Cascadia Code", Menlo, monospace;
+  font-size: var(--fs-11);
+  line-height: 1.6;
+  overflow-x: auto;
+  white-space: pre;
+}
+
+.notice__footnote {
+  margin-top: 10px;
+  font-size: var(--fs-11);
+  color: var(--text-faint);
+}

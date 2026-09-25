@@ -1,0 +1,132 @@
+/*
+ * Design tokens. Every colour, radius, shadow, type step and motion curve in
+ * the product resolves to something declared here — no component invents its
+ * own. Four brand colours drive the whole system; the rest are tints of them.
+ */
+
+:root {
+  /* ---- Brand ---------------------------------------------------------- */
+  --ivory: #f5f1e7;
+  --green-900: #12231b;
+  --green-700: #164735;
+  --yellow: #ffd75a;
+
+  /* ---- Derived neutrals ----------------------------------------------- */
+  /* Ink used for scrims over the map — a desaturated cousin of green-900. */
+  --ink: #0b1512;
+  --ivory-95: rgb(245 241 231 / 0.95);
+  --ivory-88: rgb(245 241 231 / 0.88);
+  --ivory-70: rgb(245 241 231 / 0.7);
+  --ivory-52: rgb(245 241 231 / 0.52);
+  --ivory-34: rgb(245 241 231 / 0.34);
+  --ivory-16: rgb(245 241 231 / 0.16);
+  --ivory-08: rgb(245 241 231 / 0.08);
+
+  --green-900-72: rgb(18 35 27 / 0.72);
+  --green-900-52: rgb(18 35 27 / 0.52);
+  --green-900-38: rgb(18 35 27 / 0.38);
+  --green-900-16: rgb(18 35 27 / 0.16);
+  --green-900-09: rgb(18 35 27 / 0.09);
+  --green-900-05: rgb(18 35 27 / 0.05);
+
+  --yellow-40: rgb(255 215 90 / 0.4);
+  --yellow-18: rgb(255 215 90 / 0.18);
+
+  /* ---- Semantic surfaces ---------------------------------------------- */
+  --surface: var(--ivory);
+  --surface-raised: #fbf8f1;
+  --surface-sunken: #ece7d9;
+  --surface-inverse: var(--green-900);
+  --hairline: rgb(18 35 27 / 0.1);
+  --hairline-strong: rgb(18 35 27 / 0.16);
+  --hairline-inverse: rgb(245 241 231 / 0.14);
+
+  --text-strong: var(--green-900);
+  --text: rgb(18 35 27 / 0.86);
+  --text-muted: rgb(18 35 27 / 0.56);
+  --text-faint: rgb(18 35 27 / 0.38);
+  --text-on-dark: var(--ivory);
+  --text-on-dark-muted: var(--ivory-70);
+
+  --accent: var(--yellow);
+  --accent-ink: #4a3603;
+
+  /* ---- Radii ----------------------------------------------------------- */
+  --r-xs: 8px;
+  --r-sm: 12px;
+  --r-md: 16px;
+  --r-lg: 22px;
+  --r-xl: 28px;
+  --r-sheet: 30px;
+  --r-pill: 999px;
+
+  /* ---- Elevation ------------------------------------------------------- */
+  /* Two-part shadows: a tight contact shadow plus a wide ambient one. */
+  --shadow-sm: 0 1px 2px rgb(7 16 12 / 0.16), 0 2px 8px rgb(7 16 12 / 0.12);
+  --shadow-md: 0 2px 6px rgb(7 16 12 / 0.18), 0 8px 22px rgb(7 16 12 / 0.18);
+  --shadow-lg: 0 4px 10px rgb(7 16 12 / 0.2), 0 18px 44px rgb(7 16 12 / 0.28);
+  --shadow-float: 0 2px 5px rgb(7 16 12 / 0.22), 0 12px 30px rgb(7 16 12 / 0.24);
+
+  /* ---- Type ------------------------------------------------------------ */
+  --font-sans: "Plus Jakarta Sans", ui-sans-serif, system-ui, -apple-system,
+    "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+
+  --fs-10: 0.625rem;
+  --fs-11: 0.6875rem;
+  --fs-12: 0.75rem;
+  --fs-13: 0.8125rem;
+  --fs-14: 0.875rem;
+  --fs-15: 0.9375rem;
+  --fs-17: 1.0625rem;
+  --fs-20: 1.25rem;
+  --fs-24: 1.5rem;
+  --fs-30: 1.875rem;
+
+  /* Eyebrow/metadata tracking — used for the small uppercase labels. */
+  --tracking-eyebrow: 0.09em;
+  --tracking-tight: -0.014em;
+  --tracking-tighter: -0.024em;
+
+  /* ---- Motion ---------------------------------------------------------- */
+  /* Spring-like but non-bouncy: fast start, long gentle settle. */
+  --ease-spring: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-out: cubic-bezier(0.22, 0.9, 0.3, 1);
+  --ease-in: cubic-bezier(0.5, 0, 0.75, 0);
+
+  --dur-press: 120ms;
+  --dur-fast: 180ms;
+  --dur-backdrop: 260ms;
+  --dur-panel: 340ms;
+  --dur-slow: 480ms;
+
+  /* ---- Layout ---------------------------------------------------------- */
+  --gutter: 16px;
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-left: env(safe-area-inset-left, 0px);
+  --safe-right: env(safe-area-inset-right, 0px);
+
+  --topbar-h: 48px;
+  --nav-h: 62px;
+  /* Distance from the bottom edge of the viewport to the nav bar. */
+  --nav-gap: 14px;
+  /* Everything the bottom nav occupies, including the home indicator. */
+  --nav-occupied: calc(var(--nav-h) + var(--nav-gap) + var(--safe-bottom));
+
+  /* ---- Layering -------------------------------------------------------- */
+  --z-map: 0;
+  --z-map-ui: 10;
+  --z-backdrop: 30;
+  --z-sheet: 40;
+  --z-chrome: 60;
+  --z-modal: 80;
+}
+
+/* Compact phones (iPhone SE and friends) — tighten the vertical rhythm. */
+@media (max-height: 700px) {
+  :root {
+    --nav-h: 58px;
+    --nav-gap: 10px;
+    --gutter: 14px;
+  }
+}

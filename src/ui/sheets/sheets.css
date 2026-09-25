@@ -1,0 +1,230 @@
+/* ---- Backdrop ----------------------------------------------------------- */
+/*
+ * A scrim, not a blur. Blurring a full-screen WebGL map costs real frames on
+ * a phone, and a graded scrim separates the panel from the map just as well.
+ */
+
+.backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-backdrop);
+  border: 0;
+  width: 100%;
+  background:
+    radial-gradient(120% 70% at 50% 0%, rgb(7 16 12 / 0.34), transparent 60%),
+    rgb(7 16 12 / 0.46);
+  opacity: 0;
+  transition: opacity var(--dur-backdrop) var(--ease-out);
+  cursor: default;
+}
+
+.backdrop[data-active="true"] {
+  opacity: 1;
+}
+
+/* ---- Shared sheet chrome ------------------------------------------------ */
+
+.sheet-viewport {
+  position: fixed;
+  left: 0;
+  right: 0;
+  z-index: var(--z-sheet);
+  display: flex;
+  justify-content: center;
+  padding-inline: max(var(--gutter), var(--safe-left)) max(var(--gutter), var(--safe-right));
+  pointer-events: none;
+  /* Clips the panel against the screen edge it slides out of. */
+  overflow: hidden;
+}
+
+/*
+ * The panel takes focus on open so screen readers announce it, but it is a
+ * container, not a control — the visible ring belongs on the buttons inside.
+ */
+.sheet:focus-visible,
+.modal:focus-visible {
+  outline: none;
+}
+
+.sheet {
+  position: relative;
+  width: 100%;
+  pointer-events: auto;
+  background: var(--surface);
+  color: var(--text);
+  box-shadow: var(--shadow-lg);
+  will-change: transform, opacity;
+}
+
+.sheet__header {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 2px 18px 12px;
+}
+
+.sheet__titles {
+  flex: 1;
+  min-width: 0;
+}
+
+.sheet__title {
+  font-size: var(--fs-17);
+  color: var(--text-strong);
+}
+
+.sheet__subtitle {
+  margin-top: 2px;
+  font-size: var(--fs-12);
+  color: var(--text-muted);
+}
+
+.sheet__close {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 30px;
+  height: 30px;
+  margin-top: -2px;
+  border-radius: 50%;
+  background: var(--green-900-05);
+  color: var(--text-muted);
+  transition:
+    background-color var(--dur-fast) var(--ease-out),
+    color var(--dur-fast) var(--ease-out),
+    transform var(--dur-press) var(--ease-out);
+}
+
+.sheet__close:hover {
+  background: var(--green-900-09);
+  color: var(--text-strong);
+}
+
+.sheet__close:active {
+  transform: scale(0.9);
+}
+
+.sheet__body {
+  padding: 0 18px;
+}
+
+/* ---- Top sheets (notifications, assistant) ------------------------------ */
+
+.sheet-viewport--top {
+  top: 0;
+  /* Starts below the floating header, so panels emerge from behind it. */
+  padding-top: calc(var(--safe-top) + var(--topbar-h) + 18px);
+  padding-bottom: 10px;
+}
+
+.sheet--top {
+  max-width: 460px;
+  border-radius: var(--r-xl);
+  transform: translate3d(0, -100%, 0);
+  opacity: 0;
+  transition:
+    transform var(--dur-panel) var(--ease-spring),
+    opacity calc(var(--dur-panel) * 0.6) var(--ease-out);
+  padding-top: 16px;
+  padding-bottom: 8px;
+  max-height: calc(100dvh - var(--safe-top) - var(--topbar-h) - var(--nav-occupied) - 34px);
+  display: flex;
+  flex-direction: column;
+}
+
+.sheet--top[data-active="true"] {
+  transform: translate3d(0, 0, 0);
+  opacity: 1;
+}
+
+/* ---- Bottom sheets (mission, profile, place details) -------------------- */
+
+.sheet-viewport--bottom {
+  bottom: 0;
+  top: auto;
+  align-items: flex-end;
+  padding-inline: 0;
+}
+
+.sheet--bottom {
+  max-width: 540px;
+  border-radius: var(--r-sheet) var(--r-sheet) 0 0;
+  transform: translate3d(0, 100%, 0);
+  transition: transform var(--dur-panel) var(--ease-spring);
+  display: flex;
+  flex-direction: column;
+  /* Never taller than the screen minus the header; the map stays readable. */
+  max-height: calc(100dvh - var(--safe-top) - var(--topbar-h) - 26px);
+  padding-bottom: calc(var(--nav-occupied) + 6px);
+}
+
+.sheet--bottom[data-active="true"] {
+  transform: translate3d(0, 0, 0);
+}
+
+/* While a thumb owns the sheet, transitions would fight the gesture. */
+.sheet--bottom[data-dragging="true"] {
+  transition: none;
+}
+
+.sheet__grabber {
+  display: grid;
+  place-items: center;
+  padding: 10px 0 6px;
+  cursor: grab;
+  touch-action: none;
+}
+
+.sheet__grabber:active {
+  cursor: grabbing;
+}
+
+.sheet__handle {
+  width: 38px;
+  height: 4px;
+  border-radius: var(--r-pill);
+  background: var(--green-900-16);
+}
+
+.sheet__scroll {
+  flex: 1;
+  min-height: 0;
+  /* The bottom padding is what the fade below lands on, so the last row of
+     real content — often a primary action — is never dimmed. */
+  padding: 0 18px 18px;
+  /* Fades the last row out rather than cutting it, so scrollability reads. */
+  mask-image: linear-gradient(180deg, #000 0, #000 calc(100% - 16px), transparent 100%);
+}
+
+/* ---- Centre modal (QR) --------------------------------------------------- */
+
+.modal-viewport {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-modal);
+  display: grid;
+  place-items: center;
+  padding: calc(var(--safe-top) + 16px) max(var(--gutter), var(--safe-left))
+    calc(var(--safe-bottom) + 16px) max(var(--gutter), var(--safe-right));
+  pointer-events: none;
+}
+
+.modal {
+  position: relative;
+  width: 100%;
+  max-width: 372px;
+  pointer-events: auto;
+  border-radius: var(--r-xl);
+  background: var(--surface);
+  box-shadow: var(--shadow-lg);
+  opacity: 0;
+  transform: translate3d(0, 14px, 0) scale(0.96);
+  transition:
+    transform var(--dur-panel) var(--ease-spring),
+    opacity var(--dur-fast) var(--ease-out);
+}
+
+.modal[data-active="true"] {
+  opacity: 1;
+  transform: translate3d(0, 0, 0) scale(1);
+}

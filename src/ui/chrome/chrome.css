@@ -1,0 +1,350 @@
+/* ---- Floating header ---------------------------------------------------- */
+
+.topbar {
+  position: fixed;
+  top: calc(var(--safe-top) + 10px);
+  left: max(var(--gutter), var(--safe-left));
+  right: max(var(--gutter), var(--safe-right));
+  z-index: var(--z-chrome);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  height: var(--topbar-h);
+  /* The bar itself is a layout device; only its controls take input. */
+  pointer-events: none;
+}
+
+.topbar > * {
+  pointer-events: auto;
+}
+
+/* ---- Floating round controls -------------------------------------------- */
+
+.fab {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--ivory);
+  color: var(--green-900);
+  box-shadow: var(--shadow-float);
+  transition:
+    transform var(--dur-press) var(--ease-out),
+    background-color var(--dur-fast) var(--ease-out),
+    color var(--dur-fast) var(--ease-out);
+}
+
+@media (hover: hover) {
+  .fab:hover {
+    background: var(--surface-raised);
+  }
+}
+
+.fab:active {
+  transform: scale(0.92);
+}
+
+.fab[data-active="true"] {
+  background: var(--green-900);
+  color: var(--ivory);
+}
+
+.fab__badge {
+  position: absolute;
+  top: 8px;
+  right: 9px;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--yellow);
+  box-shadow: 0 0 0 2.5px var(--ivory);
+  transition: box-shadow var(--dur-fast) var(--ease-out);
+}
+
+.fab[data-active="true"] .fab__badge {
+  box-shadow: 0 0 0 2.5px var(--green-900);
+}
+
+/* ---- Guest Mode status pill --------------------------------------------- */
+/*
+ * The one piece of standing text over the map. It answers the question the
+ * whole product hangs on — whose hotel am I inside, and for how long.
+ */
+
+.guest-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  max-width: 100%;
+  padding: 7px 13px 7px 11px;
+  border-radius: var(--r-pill);
+  background: rgb(18 35 27 / 0.74);
+  backdrop-filter: blur(10px) saturate(1.2);
+  -webkit-backdrop-filter: blur(10px) saturate(1.2);
+  box-shadow: var(--shadow-sm);
+  color: var(--ivory);
+  font-size: var(--fs-11);
+  font-weight: 600;
+  letter-spacing: var(--tracking-tight);
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.guest-pill__dot {
+  flex: none;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--yellow);
+  box-shadow: 0 0 0 3px var(--yellow-18);
+}
+
+.guest-pill__sep {
+  color: var(--ivory-34);
+}
+
+.guest-pill__meta {
+  color: var(--ivory-70);
+  font-weight: 500;
+}
+
+/* Two round controls plus a pill will not fit an iPhone SE — drop the tail. */
+@media (max-width: 360px) {
+  .guest-pill__sep,
+  .guest-pill__meta {
+    display: none;
+  }
+}
+
+/* ---- Bottom navigation --------------------------------------------------- */
+
+.bottom-nav {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: calc(var(--safe-bottom) + var(--nav-gap));
+  z-index: var(--z-chrome);
+  display: flex;
+  justify-content: center;
+  padding-inline: max(var(--gutter), var(--safe-left)) max(var(--gutter), var(--safe-right));
+  pointer-events: none;
+}
+
+.bottom-nav__bar {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr 76px 1fr;
+  align-items: center;
+  width: 100%;
+  max-width: 340px;
+  height: var(--nav-h);
+  padding: 0 6px;
+  border-radius: var(--r-xl);
+  background: var(--ivory);
+  box-shadow: var(--shadow-float);
+  pointer-events: auto;
+  transition: background-color var(--dur-panel) var(--ease-out);
+}
+
+/*
+ * A bottom sheet is ivory too, so over one the bar would disappear. Inverting
+ * it keeps the navigation legible and doubles as a signal that something is
+ * open — tapping the same button again closes it.
+ */
+.bottom-nav[data-inverted="true"] .bottom-nav__bar {
+  background: var(--green-900);
+}
+
+.nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  height: 46px;
+  border-radius: var(--r-md);
+  color: var(--text-muted);
+  transition:
+    color var(--dur-fast) var(--ease-out),
+    background-color var(--dur-fast) var(--ease-out),
+    transform var(--dur-press) var(--ease-out);
+}
+
+.nav-item:active {
+  transform: scale(0.94);
+}
+
+.nav-item__label {
+  font-size: var(--fs-10);
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
+
+.nav-item[data-active="true"] {
+  background: var(--green-900-09);
+  color: var(--green-900);
+}
+
+.nav-item[data-active="true"] .nav-item__label {
+  font-weight: 700;
+}
+
+.bottom-nav[data-inverted="true"] .nav-item {
+  color: var(--ivory-52);
+}
+
+.bottom-nav[data-inverted="true"] .nav-item[data-active="true"] {
+  background: var(--ivory-16);
+  color: var(--ivory);
+}
+
+/* ---- The QR action ------------------------------------------------------- */
+/*
+ * The centre button is the product's primary gesture, so it breaks the plane
+ * of the bar rather than sitting inside it.
+ */
+
+.qr-button {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  display: grid;
+  place-items: center;
+  width: 58px;
+  height: 58px;
+  border-radius: 50%;
+  background: var(--green-900);
+  color: var(--ivory);
+  transform: translate(-50%, -18px);
+  box-shadow:
+    0 0 0 5px var(--ivory),
+    var(--shadow-md);
+  transition:
+    transform var(--dur-fast) var(--ease-spring),
+    background-color var(--dur-fast) var(--ease-out),
+    box-shadow var(--dur-fast) var(--ease-out);
+}
+
+@media (hover: hover) {
+  .qr-button:hover {
+    transform: translate(-50%, -21px);
+  }
+}
+
+.qr-button:active {
+  transform: translate(-50%, -14px) scale(0.94);
+  transition-duration: var(--dur-press);
+}
+
+.qr-button[data-active="true"] {
+  background: var(--green-700);
+  box-shadow:
+    0 0 0 5px var(--ivory),
+    0 0 0 8px var(--yellow-40),
+    var(--shadow-md);
+}
+
+.bottom-nav[data-inverted="true"] .qr-button {
+  background: var(--ivory);
+  color: var(--green-900);
+  box-shadow:
+    0 0 0 5px var(--green-900),
+    var(--shadow-md);
+}
+
+.qr-button__caption {
+  position: absolute;
+  bottom: -15px;
+  font-size: var(--fs-10);
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: var(--green-900);
+  transition: color var(--dur-panel) var(--ease-out);
+}
+
+.bottom-nav[data-inverted="true"] .qr-button__caption {
+  color: var(--ivory);
+}
+
+/* ---- Map controls -------------------------------------------------------- */
+/*
+ * Only the two controls a guest actually reaches for. They sit on the right,
+ * clear of the navigation, and stay quiet enough not to compete with it.
+ */
+
+.map-controls {
+  position: fixed;
+  right: max(var(--gutter), var(--safe-right));
+  bottom: calc(var(--nav-occupied) + 14px);
+  z-index: var(--z-map-ui);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  pointer-events: none;
+  transition:
+    opacity var(--dur-panel) var(--ease-out),
+    transform var(--dur-panel) var(--ease-spring);
+}
+
+.map-controls > * {
+  pointer-events: auto;
+}
+
+/* Out of the way whenever a panel needs the space. */
+.map-controls[data-hidden="true"] {
+  opacity: 0;
+  transform: translate3d(0, 12px, 0);
+  pointer-events: none;
+}
+
+.map-control-group {
+  display: flex;
+  flex-direction: column;
+  border-radius: var(--r-md);
+  background: rgb(18 35 27 / 0.66);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+}
+
+.map-control {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 36px;
+  color: var(--ivory-70);
+  transition:
+    background-color var(--dur-fast) var(--ease-out),
+    color var(--dur-fast) var(--ease-out);
+}
+
+.map-control:hover {
+  background: var(--ivory-08);
+  color: var(--ivory);
+}
+
+.map-control:active {
+  background: var(--ivory-16);
+}
+
+.map-control + .map-control {
+  border-top: 1px solid var(--hairline-inverse);
+}
+
+.map-control--solo {
+  width: 38px;
+  height: 38px;
+  border-radius: var(--r-md);
+  background: rgb(18 35 27 / 0.66);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow: var(--shadow-sm);
+}
+
+.map-control--solo[data-tracking="true"] {
+  color: var(--yellow);
+}

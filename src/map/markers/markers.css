@@ -1,0 +1,247 @@
+/* ---- Place markers ------------------------------------------------------ */
+/*
+ * A marker is a lollipop: a round ivory head, a short stem, and a soft ground
+ * shadow so it reads as standing on the map rather than floating over it.
+ * Labels are opt-in — only the hotel and the selected place carry one, because
+ * a dozen permanent labels would bury the geography.
+ */
+
+.place-marker {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  /* Comfortable thumb target without inflating the visual size. */
+  padding: 6px 10px 0;
+  margin: -6px -10px 0;
+  background: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.place-marker__label {
+  margin-bottom: 7px;
+  max-width: 168px;
+  padding: 4px 10px 5px;
+  border-radius: var(--r-pill);
+  background: var(--ivory);
+  color: var(--text-strong);
+  font-size: var(--fs-11);
+  font-weight: 700;
+  letter-spacing: var(--tracking-tight);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  box-shadow: var(--shadow-md);
+  transform-origin: bottom center;
+  animation: marker-label-in var(--dur-fast) var(--ease-spring) backwards;
+}
+
+@keyframes marker-in {
+  from {
+    opacity: 0;
+    transform: scale(0.72);
+  }
+}
+
+@keyframes marker-label-in {
+  from {
+    opacity: 0;
+    transform: translateY(3px) scale(0.9);
+  }
+}
+
+.place-marker__pin {
+  position: relative;
+  /* Markers that arrive on a zoom threshold should appear, not pop. */
+  animation: marker-in 260ms var(--ease-spring) backwards;
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: var(--ivory);
+  color: var(--green-900);
+  box-shadow: var(--shadow-float);
+  transition:
+    transform var(--dur-fast) var(--ease-spring),
+    background-color var(--dur-fast) var(--ease-out),
+    color var(--dur-fast) var(--ease-out),
+    box-shadow var(--dur-fast) var(--ease-out);
+}
+
+.place-marker__stem {
+  width: 2px;
+  height: 9px;
+  border-radius: 0 0 1px 1px;
+  background: linear-gradient(var(--ivory), var(--ivory-34));
+}
+
+.place-marker__ground {
+  width: 12px;
+  height: 4px;
+  margin-top: 1px;
+  border-radius: 50%;
+  background: rgb(7 16 12 / 0.45);
+  filter: blur(1.5px);
+}
+
+/* Visited places carry a small yellow tick. */
+.place-marker__badge {
+  position: absolute;
+  top: -2px;
+  right: -3px;
+  display: grid;
+  place-items: center;
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  background: var(--yellow);
+  color: var(--accent-ink);
+  box-shadow: 0 0 0 2px var(--ivory);
+}
+
+/* -- States --------------------------------------------------------------- */
+
+@media (hover: hover) {
+  .place-marker:hover .place-marker__pin {
+    transform: translateY(-2px) scale(1.07);
+  }
+}
+
+.place-marker:active .place-marker__pin {
+  transform: scale(0.94);
+  transition-duration: var(--dur-press);
+}
+
+.place-marker[data-selected="true"] .place-marker__pin {
+  background: var(--green-900);
+  color: var(--ivory);
+  transform: translateY(-3px) scale(1.16);
+  box-shadow:
+    0 0 0 3px var(--yellow),
+    var(--shadow-lg);
+}
+
+.place-marker[data-selected="true"] .place-marker__badge {
+  box-shadow: 0 0 0 2px var(--green-900);
+}
+
+/* The hotel is the anchor of the whole experience — always dark, always named. */
+.place-marker[data-category="hotel"] .place-marker__pin {
+  width: 40px;
+  height: 40px;
+  background: var(--green-900);
+  color: var(--ivory);
+  box-shadow:
+    0 0 0 2px var(--yellow),
+    var(--shadow-float);
+}
+
+.place-marker[data-category="hotel"] .place-marker__label {
+  background: var(--green-900);
+  color: var(--ivory);
+}
+
+/* The next step of the running mission gets a slow halo. */
+.place-marker[data-highlight="true"] .place-marker__pin::after {
+  content: "";
+  position: absolute;
+  inset: -4px;
+  border-radius: 50%;
+  border: 2px solid var(--yellow);
+  animation: marker-halo 2.6s var(--ease-out) infinite;
+  pointer-events: none;
+}
+
+@keyframes marker-halo {
+  0% {
+    opacity: 0.85;
+    transform: scale(1);
+  }
+  70%,
+  100% {
+    opacity: 0;
+    transform: scale(1.7);
+  }
+}
+
+/* Places not yet visited sit back a little. */
+.place-marker[data-unlocked="false"] .place-marker__pin {
+  background: var(--ivory-88);
+}
+
+/* ---- 3D model anchors --------------------------------------------------- */
+/*
+ * Outlined rather than filled, so a model's ground marker never competes with
+ * a place. It also guarantees a model stays tappable even if its GLB is slow
+ * or fails to arrive.
+ */
+
+.model-anchor {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 8px;
+  margin: -8px;
+  background: none;
+}
+
+/*
+ * A contact ring, not a badge. Flattened towards the ground plane so it reads
+ * as lying under the model at the map's working pitch, which keeps the only
+ * DOM element near a model from looking like a floating label. The model
+ * itself is hit-tested in 3D; this exists to ground it and to give keyboard
+ * users something focusable.
+ */
+.model-anchor__ring {
+  display: block;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 1.5px solid var(--ivory-34);
+  background: radial-gradient(closest-side, rgb(245 241 231 / 0.09), transparent 70%);
+  transform: scaleY(0.4);
+  transition:
+    transform var(--dur-fast) var(--ease-spring),
+    border-color var(--dur-fast) var(--ease-out),
+    background-color var(--dur-fast) var(--ease-out);
+}
+
+@media (hover: hover) {
+  .model-anchor:hover .model-anchor__ring {
+    border-color: var(--ivory-70);
+    transform: scaleY(0.4) scale(1.08);
+  }
+}
+
+.model-anchor:active .model-anchor__ring {
+  transform: scaleY(0.4) scale(0.94);
+  transition-duration: var(--dur-press);
+}
+
+.model-anchor[data-selected="true"] .model-anchor__ring {
+  border-color: var(--yellow);
+  background: radial-gradient(closest-side, rgb(255 215 90 / 0.22), transparent 70%);
+  transform: scaleY(0.4) scale(1.12);
+}
+
+/* ---- Guest location ----------------------------------------------------- */
+
+.user-dot {
+  position: relative;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--yellow);
+  box-shadow:
+    0 0 0 3px rgb(18 35 27 / 0.85),
+    0 2px 10px rgb(255 215 90 / 0.5);
+}
+
+.user-dot::after {
+  content: "";
+  position: absolute;
+  inset: -6px;
+  border-radius: 50%;
+  border: 1.5px solid var(--yellow-40);
+  animation: marker-halo 3s var(--ease-out) infinite;
+}
