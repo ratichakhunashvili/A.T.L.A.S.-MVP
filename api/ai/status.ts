@@ -7,7 +7,7 @@
  * means the product runs on its rules engine.
  */
 
-import { readConfig, requireMethod, type ApiRequest, type ApiResponse } from "../_ai";
+import { readConfig, requireMethod, type ApiRequest, type ApiResponse } from "../_ai.js";
 
 export default function handler(request: ApiRequest, response: ApiResponse): void {
   if (!requireMethod(request, response, "GET")) return;

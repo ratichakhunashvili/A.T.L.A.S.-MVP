@@ -11,6 +11,12 @@
  * the rest of the application. Adding a third means adding a branch to
  * `callModel` and nothing else.
  *
+ * Note for anyone editing the functions that import this: the project is
+ * `"type": "module"`, so these run on Node's ESM loader and every relative
+ * import needs an explicit `.js` extension — `from "../_ai.js"`, not
+ * `from "../_ai"`. Without it the function dies at cold start with
+ * ERR_MODULE_NOT_FOUND, which is a 500 with nothing useful in the response.
+ *
  * Environment:
  *   AI_PROVIDER        "anthropic" | "openai" | unset (disables AI entirely)
  *   ANTHROPIC_API_KEY  required when AI_PROVIDER=anthropic

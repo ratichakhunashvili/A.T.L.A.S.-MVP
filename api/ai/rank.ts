@@ -18,7 +18,7 @@ import {
   requireMethod,
   type ApiRequest,
   type ApiResponse,
-} from "../_ai";
+} from "../_ai.js";
 
 interface RankRequest {
   candidates: {

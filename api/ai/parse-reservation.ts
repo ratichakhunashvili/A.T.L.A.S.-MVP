@@ -20,7 +20,7 @@ import {
   requireMethod,
   type ApiRequest,
   type ApiResponse,
-} from "../_ai";
+} from "../_ai.js";
 
 /** Long enough for a booking confirmation, short enough to bound cost. */
 const MAX_TEXT_LENGTH = 6000;
