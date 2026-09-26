@@ -115,6 +115,12 @@ export function BuildingMask({ models }: BuildingMaskProps) {
         hidden.push(nearest);
       }
 
+      // `setFeatureState` schedules a re-render on its own, but forcing the
+      // issue here is cheap insurance against the one case that matters most:
+      // an admin who just toggled the mask with the camera sitting still,
+      // where nothing else would prompt a repaint at all.
+      if (found > 0) map.triggerRepaint();
+
       if (found === points.length || attempts >= MAX_ATTEMPTS) map.off("idle", apply);
     };
 
@@ -124,10 +130,24 @@ export function BuildingMask({ models }: BuildingMaskProps) {
       hidden.length = 0;
       attempts = 0;
       map.on("idle", apply);
+      apply();
     };
 
+    /*
+     * `idle` is the wrong sole trigger for this.
+     *
+     * It fires after the camera moves or tiles load — not when an admin
+     * toggles the mask with the camera sitting still, which is the ordinary
+     * way this gets turned on. Without a camera change afterward, `idle`
+     * never refires, `apply` is never called, and the toggle silently does
+     * nothing despite the UI reporting success. Running it once immediately,
+     * every time the effect re-runs (mask toggled, model moved, list
+     * changed), is what actually makes the toggle work rather than merely
+     * arm a listener that might never fire again.
+     */
     map.on("idle", apply);
     map.on("style.load", reset);
+    apply();
 
     return () => {
       map.off("idle", apply);

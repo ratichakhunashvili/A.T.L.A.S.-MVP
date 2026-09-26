@@ -57,7 +57,7 @@ const spot = await page.evaluate(() => {
 });
 void spot;
 await wait(12000);
-await page.screenshot({ path: `${DIR}/models/05-editor-before-drag.png` });
+await page.screenshot({ path: `${outputDir("models")}/05-editor-before-drag.png` });
 
 const target = await page.evaluate(() => {
   const map = window.__map;
@@ -105,7 +105,7 @@ if (target) {
     stored && (String(stored.lng) !== before.lng || String(stored.lat) !== before.lat),
     JSON.stringify(stored),
   );
-  await page.screenshot({ path: `${DIR}/models/06-editor-after-drag.png` });
+  await page.screenshot({ path: `${outputDir("models")}/06-editor-after-drag.png` });
 }
 
 console.log(results.join("\n"));

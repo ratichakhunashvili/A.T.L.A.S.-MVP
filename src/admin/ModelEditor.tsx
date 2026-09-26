@@ -35,6 +35,7 @@ import { AccuracyRing } from "../map/AccuracyRing";
 import { CATEGORY_FAMILY } from "../ui/icons";
 import { useLocation } from "../state/location";
 import { PLACES } from "../data/seed";
+import { BuildingMask } from "../map/models/BuildingMask";
 import { MODEL_LAYER_ID, ModelLayer } from "../map/models/ModelLayer";
 import { modelRepository } from "../data/modelRepository";
 import { useModels } from "../data/useModels";
@@ -559,6 +560,9 @@ export function ModelEditor({ model, onDone }: ModelEditorProps) {
           }}
         >
           {draft.modelUrl ? <ModelLayer models={[previewModel]} selectedId={null} /> : null}
+          {/* So "Hide building underneath" shows its effect right where the
+             admin is working, instead of only on the published guest map. */}
+          <BuildingMask models={[previewModel]} />
           <ReferenceMarkers others={otherModels} />
           <AdminLocation />
           <ModelPlacement

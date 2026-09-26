@@ -10,11 +10,13 @@
  *  4. It is drawn inside the map's WebGL scene, not as a DOM overlay.
  */
 
+import { dirname, join } from "node:path";
+import { fileURLToPath } from "node:url";
+
 import { BASE, launch, outputDir } from "./harness.mjs";
 
 const OUT = outputDir("models");
-
-const GLB = `${DIR}/Duck.glb`;
+const GLB = join(dirname(fileURLToPath(import.meta.url)), "fixtures", "Duck.glb");
 
 // Somewhere unmistakable and empty: the park block east of the hotel.
 const TARGET = { lng: 44.8051, lat: 41.6949 };
