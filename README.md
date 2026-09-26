@@ -24,6 +24,30 @@ shape. Without it the app renders a short notice instead of a black screen.
 
 ---
 
+## The hotel platform
+
+The guest map is one half of the product. The other half — hotel QR onboarding,
+reservations, the partner network, the recommendation engine and the operator
+console — is documented in **[docs/PLATFORM.md](docs/PLATFORM.md)**.
+
+The short version:
+
+- **`/join/hotel/:token`** — a guest scans the code at reception, the hotel is
+  identified from the token, and four short screens later they have a plan.
+- **`/admin`** — hotels, QR codes, partners, activities, events and aggregate
+  analytics, beside the existing 3D model library.
+- **The partner rule** — a guest is only ever recommended outside experiences
+  their hotel has explicitly partnered with. A 3D model is a visual, not a
+  permission.
+- **Three layers** — deterministic rules decide what is allowed, a weighted
+  score decides what makes sense, and AI only reranks and rewrites. If AI is
+  unavailable the product is unaffected.
+
+Try it with the seeded demo hotel:
+`/join/hotel/VELIDEMO2026TBILISI0`
+
+---
+
 ## The interaction model
 
 One piece of state decides what is on screen:
@@ -79,61 +103,144 @@ src/
 The basemap is Mapbox **Standard**, configured rather than replaced. Standard
 exposes 47 configuration properties — a full colour system, a road hierarchy,
 label controls and switches for its 3D content — and `src/map/config.ts` uses
-them to pull the map into the product's palette.
+them to pull the map into the product's palette. The direction is a bright
+daytime travel map, not a dark one.
 
 **Colour.** `theme` stays `default` rather than `faded` or `monochrome`: those
 are generic LUTs, and with the real colour API available it is better to state
-the palette than to desaturate someone else's. Land is a deep green-charcoal in
-the same family as `--green-900`; water is pushed cold and a step lighter so
-the Mtkvari reads as a shape rather than a hole; buildings are a green-slate
-mass. The land-use tints ship as pale pastels for daylight and would bloom into
-blotches at night, so each is pulled into the dark green family.
+the palette than to desaturate someone else's. Land is a warm off-white rather
+than full sand, so sand is free to work on buildings and land use without the
+whole map going beige; water is a clear, slightly desaturated blue; parks are
+mint. The land-use tints ship as pale pastels and are pulled a shade apart from
+each other so districts read without the map becoming a choropleth.
 
-**Road hierarchy.** Roads are the one place the map is allowed to be warm:
-motorways read as lit arteries in gold, trunks a step down, everything else
-recedes into a cool grey-green. `roadsBrightness` is raised from 0.4 to 0.82 —
-at night the whole network otherwise sinks into the land and the hierarchy
-disappears with it.
+**Road hierarchy.** Minor roads are near-white and recede; motorways carry a
+warm amber so the arterial structure of the city is still the first thing you
+read. `roadsBrightness` runs at 1 — daylight wants the network crisp.
 
-**Labels arrive as you come in.** Rather than choosing a density once, the label
-configuration is driven by zoom: geography only in the wide view, street names
-at street zoom, a few POIs closer still. On top of that, individual basemap POI
-labels that would collide with the product's own markers are hidden through
-Standard's `poi` featureset — the alternative is switching every POI label off,
-which is what makes a map feel dead.
+**POIs stay, in one ink.** Mapbox's own category palette puts magenta and
+lavender on the map, which fights a product that has a colour system of its
+own, so POI chips are drawn in a single muted green. They are what makes the
+city feel inhabited rather than blank. Individual POI labels that would collide
+with our markers are hidden through Standard's `poi` featureset — far better
+than switching every POI label off, which is what makes a map feel dead.
+
+**Labels arrive as you come in.** Label density is driven by zoom rather than
+chosen once: geography in the wide view, street names at street zoom, more POIs
+closer still.
 
 **The hotel is a lit volume.** The guest's own building is found through the
-`buildings` featureset and tinted gold with `colorBuildingHighlight`, so the
-place they are standing in is part of the city rather than a pin hovering over
-an anonymous block.
+`buildings` featureset and tinted gold with `colorBuildingHighlight`.
 
 **Terrain.** Standard fades its own exaggeration to zero by zoom 13.7, because
 terrain under dense buildings causes artefacts. Tbilisi sits in a valley
 between two ridges, so that throws away the thing that makes the place legible.
-The curve here keeps the ridges dramatic in the wide view, holds a trace of
-slope through street zoom, and releases to flat before buildings get close
-enough to tear.
+The curve here keeps the ridges readable wide-out, holds a trace of slope at
+street zoom, and releases to flat before buildings get close enough to tear.
 
-**Light and atmosphere.** Standard's night ambient is a flat blue; shifting it
-green seats the whole scene in the brand without touching a colour value. A low
-warm directional from the south-west gives buildings a lit face and a long
-shadow — which is also what makes an uploaded model look like it is standing in
-the city. The fog dissolves the far edge into the same deep green the UI sits
-on, so the map meets the interface at the horizon rather than at the bezel.
+**Light and atmosphere.** Neutral daylight with a touch of warmth. A night
+build can afford a coloured ambient; in daylight a tinted ambient reads as a
+cast over everything, so the brand lives in the surfaces instead. The
+directional gives buildings a lit face and a soft shadow — which is also what
+makes an uploaded 3D model look like it is standing in the city. Fog supplies
+aerial perspective, not weather.
 
 **3D content.** Buildings, trees and landmarks are all on; Standard's own 3D
 landmark models are what give Rustaveli and Freedom Square their presence.
-Per-building facades are the most expensive thing Standard can draw, so they
-are enabled only where there is hardware to spend.
+Per-building facades are the most expensive thing Standard draws and have no
+coverage in Tbilisi, so they are off behind a one-line flag.
 
-**Camera.** The map opens high, wide and rotated, then settles into a pitched
-exploration view over three seconds. Any touch cancels it, and it is skipped
-under `prefers-reduced-motion`. Markers thin out below zoom 13.4 — a dozen pins
-that read as curation at street zoom become a pile of discs over the whole city.
+**Camera.** The map opens higher and wider, then settles into a pitched
+exploration view over three seconds. Pitch is deliberately moderate — enough
+depth to read the 3D city, shallow enough that the street grid still reads as a
+map. Any touch cancels the move, and it is skipped under `prefers-reduced-motion`.
 
 Mapbox's default control cluster is not used; the product draws its own zoom and
 locate controls. The wordmark and attribution stay — they are required — pushed
 clear of the navigation and toned down to the weight of a caption.
+
+## Location and proximity
+
+Geolocation is a permission **and** an estimate, not a fact, so
+`src/state/location.tsx` represents every state the browser can produce —
+`idle`, `locating`, `granted`, `denied`, `unavailable`, `error` — plus *why* the
+last attempt failed (`permission`, `timeout`, `unavailable`, `insecure`). It is
+the single source of truth: the marker, the accuracy ring, the camera, the
+recentre control and the nearby ranking all read the same `fix`.
+
+**The source is `navigator.geolocation` and nothing else.** There is no IP
+lookup, no city fallback, no geocoder in the location path, and no coordinate
+is ever persisted between sessions.
+
+**Two rungs, both device.** A high-accuracy request waits on a GPS or Wi-Fi
+scan a desktop may never produce, and it times out often. A timeout there is
+not the same as "this device has no location", so the app retries the same
+provider with `enableHighAccuracy: false` before giving up. Both rungs use
+`maximumAge: 0` — a cached fix may predate the guest walking anywhere. The
+watch then runs in whichever mode actually answered.
+
+**Accuracy decides what a fix may be used for** (`ACCURACY_THRESHOLDS`):
+
+| Quality | Accuracy | Behaviour |
+| --- | --- | --- |
+| precise | ≤120 m | Camera flies to street zoom, solid dot, exact distances and walking times |
+| approximate | ≤2000 m | Camera framed to the uncertainty circle, hollow dot, radius drawn, distances prefixed `≈`, no walking time |
+| coarse | >2000 m | **Camera does not move.** Hollow dot and radius, nothing ranked as nearest, no distance claimed — and a card explains that this is a network estimate, offering "Show that area" and "Try again" |
+
+Nothing is ever flown to automatically on a coarse fix, because being dragged
+to the wrong side of the city is worse than not moving. But nothing goes quiet
+either: a coarse fix, a timeout and a denial each raise an explanation naming
+the likely cause, so the map is never left sitting on the seeded hotel looking
+as though it has decided where you are.
+
+Every reading is validated before it reaches the map — finite numbers,
+latitude within ±90, longitude within ±180, Null Island rejected, no timestamps
+from the future. Which of two readings wins weighs **time as well as accuracy**:
+a decisively newer fix is preferred even if slightly looser, because ranking on
+accuracy alone pins the marker in place while the guest walks away from it.
+
+The camera follows the **first** trustworthy fix and never again. After that a
+moving position updates the marker but not the view; the recentre control is
+the only thing that moves the camera back.
+
+Distances use the haversine formula (`src/data/geo.ts`) — never coordinate
+subtraction. Places rank into three tiers:
+
+| Tier | Treatment |
+| --- | --- |
+| nearest | Largest pin, a soft ring in its own colour, and a distance label |
+| near (next 7) | Full-strength pin |
+| far | Smaller and dimmed — de-emphasised, never removed |
+
+Markers are coloured by **family** rather than by category: where you sleep,
+eat, taste, look at, or do something. Nine categories would mean nine colours,
+and nine colours on one map is noise.
+
+**Diagnosing a wrong location.** `npm run dev` shows a **GPS** button at the
+bottom-left. It reports the raw browser values (latitude, longitude, accuracy,
+fix age), the permission and error state, whether the context is secure, what
+was tried on each rung, what the map is centred on, what the ranking measured
+from, and a drift readout proving the marker and the ranking agree. It is
+behind `import.meta.env.DEV`, so it is dropped from production builds.
+
+## Accounts
+
+There was no authentication in the project, so `src/auth/authService.ts` adds
+the same shape the model registry uses: an `AuthService` interface with a
+browser-local implementation, swappable for Supabase, Firebase or a custom API
+in one adapter file and one line at the bottom.
+
+**The local implementation is a stand-in, not real authentication.** Accounts
+live in this browser's `localStorage`. Passwords are salted and hashed rather
+than stored in the clear, but that protects almost nothing when the hash sits
+beside the data on the same device: no server, no rate limiting, no way to
+revoke a session. It exists so the experience can be designed and tested end to
+end. Connect a real provider before anyone's actual password is typed into it.
+
+Sign up and sign in are a sheet over the map, in the same overlay state machine
+as everything else. Validation is inline and per field; nothing calls `alert()`.
+Guest access is never removed — "Continue as guest" closes the sheet, and the
+map, missions, scanner and 3D models all work without an account.
 
 ## 3D models
 

@@ -123,7 +123,7 @@ export function ModelLayer({ models, selectedId, onSelect }: ModelLayerProps) {
         map.setPaintProperty(MODEL_LAYER_ID, "model-color", [
           "case",
           isSelected,
-          "#FFD75A",
+          "#D9ED92",
           "#FFFFFF",
         ]);
         map.setPaintProperty(MODEL_LAYER_ID, "model-color-mix-intensity", [
@@ -242,7 +242,7 @@ export function ModelLayer({ models, selectedId, onSelect }: ModelLayerProps) {
     const isSelected = ["==", ["get", "id"], selectedId ?? ""];
 
     try {
-      map.setPaintProperty(MODEL_LAYER_ID, "model-color", ["case", isSelected, "#FFD75A", "#FFFFFF"]);
+      map.setPaintProperty(MODEL_LAYER_ID, "model-color", ["case", isSelected, "#D9ED92", "#FFFFFF"]);
       map.setPaintProperty(MODEL_LAYER_ID, "model-color-mix-intensity", ["case", isSelected, 0.32, 0]);
       map.setPaintProperty(MODEL_LAYER_ID, "model-emissive-strength", ["case", isSelected, 1.0, 0.55]);
     } catch {

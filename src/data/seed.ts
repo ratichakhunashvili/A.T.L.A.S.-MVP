@@ -29,11 +29,14 @@ export const STAY: GuestStay = {
   latitude: 41.69314,
 };
 
-/** Opening camera. Pitched enough to read the 3D city, never vertiginous. */
+/**
+ * Opening camera. Pitched enough to read the 3D city and the slope it sits on,
+ * shallow enough that the street grid stays legible as a map.
+ */
 export const INITIAL_CAMERA = {
   center: [STAY.longitude, STAY.latitude] as [number, number],
-  zoom: 15.4,
-  pitch: 56,
+  zoom: 15.6,
+  pitch: 46,
   bearing: -18,
 };
 
@@ -180,7 +183,6 @@ export const MISSIONS: Mission[] = [
     title: "Explore Old Tbilisi",
     subtitle: "Five places that explain the city",
     category: "landmark",
-    reward: 250,
     distanceKm: 1.1,
     active: true,
     steps: [
@@ -225,7 +227,6 @@ export const MISSIONS: Mission[] = [
     title: "Above the City",
     subtitle: "Cable car, ridge walk, the wheel",
     category: "adventure",
-    reward: 200,
     distanceKm: 1.3,
     steps: [
       { id: "s1", title: "Ridge Cable Car", detail: "1.3 km", done: false, placeId: "cable-car" },
@@ -237,7 +238,6 @@ export const MISSIONS: Mission[] = [
     title: "Table of Kakheti",
     subtitle: "Three tastings, one region",
     category: "restaurant",
-    reward: 180,
     distanceKm: 0.6,
     steps: [
       { id: "s1", title: "Qvevri Wine Cellar", detail: "1.8 km", done: false, placeId: "wine-cellar" },
@@ -285,7 +285,6 @@ export const PROFILE: GuestProfile = {
   name: "Nino Beridze",
   initials: "NB",
   memberSince: "Traveller since 2024",
-  points: 1240,
   completedMissions: 12,
   savedPlaces: 8,
   reviews: 21,

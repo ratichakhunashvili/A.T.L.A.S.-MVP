@@ -7,6 +7,7 @@
 
 import { Bell, Sparkles } from "lucide-react";
 
+import { useGuest } from "../../state/guest";
 import { useOverlay } from "../../state/overlay";
 import { STAY } from "../../data/seed";
 
@@ -14,11 +15,37 @@ interface TopBarProps {
   unreadCount: number;
 }
 
+/** Whole days from today until check-out. */
+function nightsRemaining(checkOut: string): number {
+  const end = Date.parse(`${checkOut}T00:00:00`);
+  if (!Number.isFinite(end)) return 0;
+  const now = new Date();
+  now.setHours(0, 0, 0, 0);
+  return Math.max(0, Math.round((end - now.getTime()) / 86_400_000));
+}
+
 export function TopBar({ unreadCount }: TopBarProps) {
   const { toggle, isOpen } = useOverlay();
+  const { hotel, reservation } = useGuest();
 
   const notificationsOpen = isOpen("notifications");
   const chatOpen = isOpen("chatbot");
+  const stayOpen = isOpen("stay");
+
+  /*
+   * What the pill says.
+   *
+   * A real stay reports the nights left in it; a guest with no dates yet is
+   * invited to add them, which is the whole reason the pill became a button.
+   */
+  const hotelName = hotel?.name ?? STAY.hotelName;
+  const daysLeft = reservation ? nightsRemaining(reservation.checkOut) : null;
+  const meta =
+    daysLeft === null
+      ? "Add your dates"
+      : daysLeft <= 0
+        ? "Last day"
+        : `${daysLeft} ${daysLeft === 1 ? "day" : "days"} left`;
 
   return (
     <header className="topbar on-dark">
@@ -38,16 +65,23 @@ export function TopBar({ unreadCount }: TopBarProps) {
         {unreadCount > 0 ? <span className="fab__badge" /> : null}
       </button>
 
-      <p className="guest-pill">
+      <button
+        type="button"
+        className="guest-pill"
+        data-active={stayOpen}
+        aria-label="Your stay dates"
+        aria-expanded={stayOpen}
+        onClick={() => toggle("stay")}
+      >
         <span className="guest-pill__dot" aria-hidden="true" />
         Guest Mode
         <span className="guest-pill__sep" aria-hidden="true">
           ·
         </span>
         <span className="guest-pill__meta">
-          {STAY.hotelName} · {STAY.daysLeft} days left
+          {hotelName} · {meta}
         </span>
-      </p>
+      </button>
 
       <button
         type="button"

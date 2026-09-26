@@ -28,19 +28,40 @@ export type OverlayId =
   | "mission"
   | "profile"
   | "qr"
-  /** Details for a tapped marker or 3D model. */
-  | "place";
+  /** Details for a tapped marker, 3D model or planned task. */
+  | "place"
+  /** Sign up / sign in. */
+  | "auth"
+  /** The guest's achievement collection. */
+  | "achievements"
+  /** Stay dates, opened from the header. */
+  | "stay";
 
 /** Panels that enter from the top edge. */
-export const TOP_OVERLAYS: readonly OverlayId[] = ["notifications", "chatbot"];
+export const TOP_OVERLAYS: readonly OverlayId[] = ["notifications", "chatbot", "stay"];
 /** Panels that enter from the bottom edge. */
-export const BOTTOM_OVERLAYS: readonly OverlayId[] = ["mission", "profile", "place"];
+export const BOTTOM_OVERLAYS: readonly OverlayId[] = [
+  "mission",
+  "profile",
+  "place",
+  "auth",
+  "achievements",
+];
 
-/** What the details sheet is currently describing. */
+/**
+ * What the details sheet is currently describing.
+ *
+ * `task` was added alongside `place` and `model` rather than replacing them: a
+ * guest can still browse a place that is not in today's plan, and a 3D model
+ * still opens its own card. A task is simply a third thing a marker can be.
+ */
 export interface Selection {
-  kind: "place" | "model";
+  kind: "place" | "model" | "task";
   id: string;
 }
+
+/** Which face of the account sheet to open on. */
+export type AuthMode = "signup" | "signin";
 
 interface OverlayContextValue {
   activeOverlay: OverlayId | null;
@@ -50,6 +71,9 @@ interface OverlayContextValue {
   toggle: (id: OverlayId) => void;
   /** Opens the details sheet for a marker or model. */
   select: (selection: Selection) => void;
+  /** Opens the account sheet on a chosen face. */
+  openAuth: (mode: AuthMode) => void;
+  authMode: AuthMode;
   isOpen: (id: OverlayId) => boolean;
   /** True while any bottom sheet is up — the nav inverts against it. */
   bottomSheetOpen: boolean;
@@ -60,6 +84,7 @@ const OverlayContext = createContext<OverlayContextValue | null>(null);
 export function OverlayProvider({ children }: { children: ReactNode }) {
   const [activeOverlay, setActiveOverlay] = useState<OverlayId | null>(null);
   const [selection, setSelection] = useState<Selection | null>(null);
+  const [authMode, setAuthMode] = useState<AuthMode>("signup");
   const clearTimer = useRef<number | undefined>(undefined);
 
   const open = useCallback((id: OverlayId) => {
@@ -72,6 +97,12 @@ export function OverlayProvider({ children }: { children: ReactNode }) {
   const toggle = useCallback((id: OverlayId) => {
     window.clearTimeout(clearTimer.current);
     setActiveOverlay((current) => (current === id ? null : id));
+  }, []);
+
+  const openAuth = useCallback((mode: AuthMode) => {
+    window.clearTimeout(clearTimer.current);
+    setAuthMode(mode);
+    setActiveOverlay("auth");
   }, []);
 
   const select = useCallback((next: Selection) => {
@@ -99,10 +130,12 @@ export function OverlayProvider({ children }: { children: ReactNode }) {
       close,
       toggle,
       select,
+      openAuth,
+      authMode,
       isOpen: (id) => activeOverlay === id,
       bottomSheetOpen: activeOverlay !== null && BOTTOM_OVERLAYS.includes(activeOverlay),
     }),
-    [activeOverlay, selection, open, close, toggle, select],
+    [activeOverlay, selection, open, close, toggle, select, openAuth, authMode],
   );
 
   return <OverlayContext.Provider value={value}>{children}</OverlayContext.Provider>;

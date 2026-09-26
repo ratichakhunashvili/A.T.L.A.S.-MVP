@@ -12,7 +12,18 @@
  * the hand stops moving.
  */
 
-import { ArrowLeft, Box, ChevronDown, ChevronUp, Crosshair } from "lucide-react";
+import {
+  ArrowLeft,
+  Box,
+  ChevronDown,
+  ChevronUp,
+  ClipboardPaste,
+  Crosshair,
+  Eye,
+  EyeOff,
+  LocateFixed,
+  MapPin,
+} from "lucide-react";
 import type { Map as MapboxMap, MapMouseEvent, MapTouchEvent } from "mapbox-gl";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
@@ -20,8 +31,13 @@ import { ModelUploader } from "./ModelUploader";
 import { MAPBOX_TOKEN } from "../map/config";
 import { MapMarker } from "../map/MapMarker";
 import { MapProvider, useMap } from "../map/MapProvider";
+import { AccuracyRing } from "../map/AccuracyRing";
+import { CATEGORY_FAMILY } from "../ui/icons";
+import { useLocation } from "../state/location";
+import { PLACES } from "../data/seed";
 import { MODEL_LAYER_ID, ModelLayer } from "../map/models/ModelLayer";
 import { modelRepository } from "../data/modelRepository";
+import { useModels } from "../data/useModels";
 import { STAY } from "../data/seed";
 import {
   CATEGORY_LABEL,
@@ -138,6 +154,83 @@ function ModelPlacement({ onPlace }: { onPlace: (lng: number, lat: number) => vo
   }, [map]);
 
   return null;
+}
+
+/**
+ * The administrator's own position, inside the editor.
+ *
+ * Placing a model is often done standing in front of the thing being modelled,
+ * so seeing yourself on the editor map — and what is around you — is the
+ * difference between hunting for a rooftop and recognising it.
+ */
+function AdminLocation() {
+  const { position, quality, fix } = useLocation();
+  if (!position) return null;
+
+  return (
+    <>
+      <AccuracyRing fix={fix} quality={quality} />
+      <MapMarker
+        longitude={position.longitude}
+        latitude={position.latitude}
+        anchor="center"
+        zIndex={45}
+      >
+        <div
+          className="user-dot"
+          data-quality={quality ?? "precise"}
+          role="img"
+          aria-label="Your location"
+        />
+      </MapMarker>
+    </>
+  );
+}
+
+/**
+ * Curated places and the other models, drawn quietly.
+ *
+ * Context, not content: an administrator needs to see what is already nearby
+ * so a new model lands beside the right doorway and not on top of an existing
+ * one. Deliberately muted and non-interactive so it never competes with the
+ * thing being placed.
+ */
+function ReferenceMarkers({ others }: { others: MapModel[] }) {
+  return (
+    <>
+      {PLACES.map((place) => (
+        <MapMarker
+          key={`place-${place.id}`}
+          longitude={place.longitude}
+          latitude={place.latitude}
+          anchor="center"
+          zIndex={2}
+          interactive={false}
+        >
+          <div className="editor-ref" data-family={CATEGORY_FAMILY[place.category]} aria-hidden="true">
+            <span className="editor-ref__dot" />
+            <span className="editor-ref__label">{place.name}</span>
+          </div>
+        </MapMarker>
+      ))}
+
+      {others.map((other) => (
+        <MapMarker
+          key={`model-${other.id}`}
+          longitude={other.longitude}
+          latitude={other.latitude}
+          anchor="center"
+          zIndex={3}
+          interactive={false}
+        >
+          <div className="editor-ref editor-ref--model" aria-hidden="true">
+            <span className="editor-ref__dot" />
+            <span className="editor-ref__label">{other.name}</span>
+          </div>
+        </MapMarker>
+      ))}
+    </>
+  );
 }
 
 /** Hands the live map instance up to the editor, for the framing control. */
@@ -302,6 +395,9 @@ interface ModelEditorProps {
 
 export function ModelEditor({ model, onDone }: ModelEditorProps) {
   const [draft, setDraft] = useState<MapModelDraft>(() => (model ? { ...model } : blankDraft()));
+  /** True while the next map tap adds a building to the mask. */
+  const [pickingBuilding, setPickingBuilding] = useState(false);
+  const masked = draft.hiddenBuildings ?? [];
   const [recordId, setRecordId] = useState<string | null>(model?.id ?? null);
   const [saveState, setSaveState] = useState<"idle" | "saving" | "saved">("idle");
   const [collapsed, setCollapsed] = useState(false);
@@ -344,6 +440,75 @@ export function ModelEditor({ model, onDone }: ModelEditorProps) {
       }),
     [patch],
   );
+
+  const { position: myPosition, status: locationStatus, request: requestLocation } = useLocation();
+  const { models: allModels } = useModels("all");
+
+  /** Everything except the model being edited, for context on the map. */
+  const otherModels = useMemo(
+    () => allModels.filter((candidate: MapModel) => candidate.id !== recordId),
+    [allModels, recordId],
+  );
+
+  /**
+   * Drop the model wherever the map is currently aimed.
+   *
+   * Panning a map under a fixed crosshair is far easier to do accurately than
+   * tapping a precise point — especially on a phone, where a fingertip covers
+   * the very thing being aimed at.
+   */
+  const placeAtCentre = useCallback(() => {
+    const centre = mapRef.current?.getCenter();
+    if (centre) place(centre.lng, centre.lat);
+  }, [place]);
+
+  /** Take the camera to the administrator, asking for permission if needed. */
+  const goToMyLocation = useCallback(() => {
+    if (!myPosition) {
+      requestLocation();
+      return;
+    }
+    mapRef.current?.flyTo({
+      center: [myPosition.longitude, myPosition.latitude],
+      zoom: Math.max(mapRef.current.getZoom(), 17),
+      duration: 1200,
+      essential: true,
+    });
+  }, [myPosition, requestLocation]);
+
+  /** Put the model exactly where the administrator is standing. */
+  const placeAtMyLocation = useCallback(() => {
+    if (!myPosition) {
+      requestLocation();
+      return;
+    }
+    place(myPosition.longitude, myPosition.latitude);
+  }, [myPosition, place, requestLocation]);
+
+  /**
+   * Accepts a pasted "41.6949, 44.8051" — the form coordinates arrive from a
+   * spreadsheet or a maps app far more often than they are typed by hand.
+   */
+  const [pasted, setPasted] = useState("");
+  const [pasteError, setPasteError] = useState<string | null>(null);
+
+  const applyPasted = useCallback(() => {
+    const match = pasted.trim().match(/^\s*(-?\d+(?:\.\d+)?)\s*[,;\s]\s*(-?\d+(?:\.\d+)?)\s*$/);
+    if (!match) {
+      setPasteError("Expected two numbers, latitude first — for example 41.6949, 44.8051");
+      return;
+    }
+    const latitude = Number(match[1]);
+    const longitude = Number(match[2]);
+    if (latitude < -90 || latitude > 90 || longitude < -180 || longitude > 180) {
+      setPasteError("Those are outside the valid range for latitude and longitude.");
+      return;
+    }
+    setPasteError(null);
+    setPasted("");
+    place(longitude, latitude);
+  }, [pasted, place]);
+
 
   /* Debounced persistence — only once a record exists and only after a real
      change, so opening the editor never writes to the registry. */
@@ -394,7 +559,20 @@ export function ModelEditor({ model, onDone }: ModelEditorProps) {
           }}
         >
           {draft.modelUrl ? <ModelLayer models={[previewModel]} selectedId={null} /> : null}
-          <ModelPlacement onPlace={place} />
+          <ReferenceMarkers others={otherModels} />
+          <AdminLocation />
+          <ModelPlacement
+            onPlace={(longitude, latitude) => {
+              if (!pickingBuilding) {
+                place(longitude, latitude);
+                return;
+              }
+              // Tapping while picking adds a footprint to the mask instead of
+              // moving the model — which is what the admin just asked for.
+              patch({ hiddenBuildings: [...masked, { longitude, latitude }] });
+              setPickingBuilding(false);
+            }}
+          />
           <MapHandle onMap={handleMap} />
           <CameraSync longitude={draft.longitude} latitude={draft.latitude} />
           <MapMarker
@@ -411,7 +589,31 @@ export function ModelEditor({ model, onDone }: ModelEditorProps) {
           </MapMarker>
         </MapProvider>
 
-        <p className="editor__hint">Drag the model, or click anywhere to move it</p>
+        {/* Fixed to the centre of the map: pan to aim, then drop. */}
+        <div className="editor__crosshair" aria-hidden="true">
+          <span className="editor__crosshair-ring" />
+        </div>
+
+        <div className="editor__tools">
+          <button type="button" className="btn btn--sm" onClick={placeAtCentre}>
+            <Crosshair size={13} strokeWidth={2.4} aria-hidden="true" />
+            Place here
+          </button>
+          <button
+            type="button"
+            className="btn btn--sm btn--ghost editor__tool"
+            data-active={Boolean(myPosition)}
+            onClick={goToMyLocation}
+            title={myPosition ? "Go to your location" : "Show your location"}
+          >
+            <LocateFixed size={13} strokeWidth={2.4} aria-hidden="true" />
+            {locationStatus === "locating" ? "Locating…" : "My location"}
+          </button>
+        </div>
+
+        <p className="editor__hint">
+          Pan the map and press <strong>Place here</strong>, or drag the model itself
+        </p>
       </div>
 
       <div className="editor__panel" data-collapsed={collapsed}>
@@ -577,15 +779,105 @@ export function ModelEditor({ model, onDone }: ModelEditorProps) {
             </div>
           </div>
 
-          <button
-            type="button"
-            className="btn btn--ghost btn--sm"
-            style={{ width: "100%", marginBottom: 14 }}
-            onClick={frameModel}
-          >
-            <Crosshair size={13} strokeWidth={2.2} aria-hidden="true" />
-            Centre the map on the model
-          </button>
+          <div className="field">
+            <span className="field__label">Paste coordinates</span>
+            <div className="field__control">
+              <input
+                className="input"
+                value={pasted}
+                placeholder="41.6949, 44.8051"
+                aria-invalid={Boolean(pasteError)}
+                onChange={(event) => {
+                  setPasted(event.target.value);
+                  setPasteError(null);
+                }}
+                onKeyDown={(event) => {
+                  if (event.key === "Enter") {
+                    event.preventDefault();
+                    applyPasted();
+                  }
+                }}
+              />
+              <button
+                type="button"
+                className="field__reveal"
+                aria-label="Apply pasted coordinates"
+                onClick={applyPasted}
+              >
+                <ClipboardPaste size={15} aria-hidden="true" />
+              </button>
+            </div>
+            {pasteError ? (
+              <p className="field__error" role="alert">
+                {pasteError}
+              </p>
+            ) : (
+              <p className="field__hint">Latitude first, as most maps copy it.</p>
+            )}
+          </div>
+
+          <div className="editor__place-actions">
+            <button type="button" className="btn btn--ghost btn--sm" onClick={frameModel}>
+              <Crosshair size={13} strokeWidth={2.2} aria-hidden="true" />
+              Centre on model
+            </button>
+            <button type="button" className="btn btn--ghost btn--sm" onClick={placeAtMyLocation}>
+              <MapPin size={13} strokeWidth={2.2} aria-hidden="true" />
+              Put it where I am
+            </button>
+          </div>
+
+          {/*
+            The basemap building underneath.
+
+            Automatic matching is done at render time from the stored point,
+            so the usual case is one tap: "the building under this model".
+            When the model sits between footprints, or covers two, the admin
+            adds them by tapping the map — which is why this stores a list of
+            points rather than a single flag.
+          */}
+          <div className="field">
+            <span className="field__label">Basemap building</span>
+
+            <div className="editor__place-actions">
+              <button
+                type="button"
+                className="btn btn--ghost btn--sm"
+                aria-pressed={masked.length > 0}
+                onClick={() =>
+                  patch({
+                    hiddenBuildings:
+                      masked.length > 0
+                        ? []
+                        : [{ longitude: draft.longitude, latitude: draft.latitude }],
+                  })
+                }
+              >
+                {masked.length > 0 ? (
+                  <Eye size={13} strokeWidth={2.2} aria-hidden="true" />
+                ) : (
+                  <EyeOff size={13} strokeWidth={2.2} aria-hidden="true" />
+                )}
+                {masked.length > 0 ? "Show building again" : "Hide building underneath"}
+              </button>
+
+              <button
+                type="button"
+                className="btn btn--ghost btn--sm"
+                data-active={pickingBuilding}
+                onClick={() => setPickingBuilding((current) => !current)}
+              >
+                <Crosshair size={13} strokeWidth={2.2} aria-hidden="true" />
+                {pickingBuilding ? "Tap the map…" : "Pick another"}
+              </button>
+            </div>
+
+            <p className="field__hint">
+              {masked.length === 0
+                ? "The Mapbox building under this model is left visible."
+                : `${masked.length} ${masked.length === 1 ? "building" : "buildings"} hidden under this model. Only these — the rest of the city stays.`}
+            </p>
+          </div>
 
           <SliderField
             label="Altitude"

@@ -1,0 +1,1176 @@
+{
+  "hotels": [
+    {
+      "id": "htl-hotel-veli-a1b2c3",
+      "name": "Hotel Veli",
+      "address": "12 Shalva Dadiani Street",
+      "city": "Tbilisi",
+      "latitude": 41.69314,
+      "longitude": 44.80217,
+      "active": true,
+      "tagline": "Old Tbilisi, one street back from Freedom Square.",
+      "timezone": "Asia/Tbilisi",
+      "checkInTime": "14:00",
+      "checkOutTime": "11:00",
+      "dailyReward": {
+        "title": "A coffee on us",
+        "description": "Finish everything on today's list and the first one is ours.",
+        "location": "Lobby bar"
+      },
+      "createdAt": "2026-09-01T09:00:00.000Z",
+      "updatedAt": "2026-09-01T09:00:00.000Z"
+    }
+  ],
+  "achievements": [
+    {
+      "id": "ach-narikala",
+      "attractionId": "exp-narikala",
+      "name": "Narikala Explorer",
+      "description": "Walked the fourth-century walls above the old town.",
+      "icon": "Castle",
+      "tone": "highlight",
+      "active": true,
+      "createdAt": "2026-09-01T09:00:00.000Z",
+      "updatedAt": "2026-09-01T09:00:00.000Z"
+    },
+    {
+      "id": "ach-qvevri",
+      "attractionId": "exp-qvevri",
+      "name": "Qvevri Taster",
+      "description": "Learned the qvevri tradition from a Tbilisi winemaker.",
+      "icon": "Wine",
+      "tone": "warning",
+      "active": true,
+      "createdAt": "2026-09-01T09:00:00.000Z",
+      "updatedAt": "2026-09-01T09:00:00.000Z"
+    },
+    {
+      "id": "ach-riverside",
+      "attractionId": "exp-riverside",
+      "name": "Riverside Regular",
+      "description": "Ate Kakhetian cooking on a terrace over the Mtkvari.",
+      "icon": "UtensilsCrossed",
+      "tone": "warning",
+      "active": true,
+      "createdAt": "2026-09-01T09:00:00.000Z",
+      "updatedAt": "2026-09-01T09:00:00.000Z"
+    },
+    {
+      "id": "ach-sulphur",
+      "attractionId": "exp-sulphur",
+      "name": "Abanotubani Bather",
+      "description": "Took the waters under the brick domes.",
+      "icon": "Wine",
+      "tone": "property",
+      "active": true,
+      "createdAt": "2026-09-01T09:00:00.000Z",
+      "updatedAt": "2026-09-01T09:00:00.000Z"
+    },
+    {
+      "id": "ach-botanical",
+      "attractionId": "exp-botanical",
+      "name": "Garden Wanderer",
+      "description": "Followed the waterfall path behind the fortress ridge.",
+      "icon": "Trees",
+      "tone": "success",
+      "active": true,
+      "createdAt": "2026-09-01T09:00:00.000Z",
+      "updatedAt": "2026-09-01T09:00:00.000Z"
+    },
+    {
+      "id": "ach-jazz",
+      "attractionId": "exp-jazz",
+      "name": "Blue Balcony Listener",
+      "description": "Caught a set in the basement off Rustaveli.",
+      "icon": "Music",
+      "tone": "music",
+      "active": true,
+      "createdAt": "2026-09-01T09:00:00.000Z",
+      "updatedAt": "2026-09-01T09:00:00.000Z"
+    },
+    {
+      "id": "ach-mtatsminda",
+      "attractionId": "exp-mtatsminda",
+      "name": "Ridge Rider",
+      "description": "Rode the 1905 funicular and walked the top.",
+      "icon": "CableCar",
+      "tone": "success",
+      "active": true,
+      "createdAt": "2026-09-01T09:00:00.000Z",
+      "updatedAt": "2026-09-01T09:00:00.000Z"
+    },
+    {
+      "id": "ach-museum-soviet",
+      "attractionId": "exp-museum-soviet",
+      "name": "Museum Goer",
+      "description": "Spent an hour with 1921 to 1991.",
+      "icon": "Landmark",
+      "tone": "highlight",
+      "active": true,
+      "createdAt": "2026-09-01T09:00:00.000Z",
+      "updatedAt": "2026-09-01T09:00:00.000Z"
+    },
+    {
+      "id": "ach-dry-bridge",
+      "attractionId": "exp-dry-bridge",
+      "name": "Market Finder",
+      "description": "Combed the Dry Bridge on a weekend morning.",
+      "icon": "Landmark",
+      "tone": "highlight",
+      "active": true,
+      "createdAt": "2026-09-01T09:00:00.000Z",
+      "updatedAt": "2026-09-01T09:00:00.000Z"
+    },
+    {
+      "id": "ach-pottery",
+      "attractionId": "exp-pottery",
+      "name": "Clay Handler",
+      "description": "Sat down at the wheel on Betlemi.",
+      "icon": "Wine",
+      "tone": "warning",
+      "active": true,
+      "createdAt": "2026-09-01T09:00:00.000Z",
+      "updatedAt": "2026-09-01T09:00:00.000Z"
+    }
+  ],
+  "hotelQRCodes": [
+    {
+      "id": "qr-veli-demo",
+      "hotelId": "htl-hotel-veli-a1b2c3",
+      "token": "VELIDEMO2026TBILISI0",
+      "active": true,
+      "expiresAt": null,
+      "scanCount": 0,
+      "lastScannedAt": null,
+      "label": "Reception desk",
+      "createdAt": "2026-09-01T09:00:00.000Z",
+      "updatedAt": "2026-09-01T09:00:00.000Z"
+    }
+  ],
+  "experiences": [
+    {
+      "id": "exp-veli-spa",
+      "name": "Veli Spa and hammam",
+      "description": "The hotel's stone hammam and steam room, two floors down. Towels and tea included.",
+      "type": "HOTEL_ACTIVITY",
+      "category": "hotel",
+      "latitude": 41.69314,
+      "longitude": 44.80217,
+      "durationMin": 45,
+      "openingHours": [
+        {
+          "weekday": 0,
+          "opens": "07:00",
+          "closes": "21:00"
+        },
+        {
+          "weekday": 1,
+          "opens": "07:00",
+          "closes": "21:00"
+        },
+        {
+          "weekday": 2,
+          "opens": "07:00",
+          "closes": "21:00"
+        },
+        {
+          "weekday": 3,
+          "opens": "07:00",
+          "closes": "21:00"
+        },
+        {
+          "weekday": 4,
+          "opens": "07:00",
+          "closes": "21:00"
+        },
+        {
+          "weekday": 5,
+          "opens": "07:00",
+          "closes": "21:00"
+        },
+        {
+          "weekday": 6,
+          "opens": "07:00",
+          "closes": "21:00"
+        }
+      ],
+      "budget": "moderate",
+      "effort": "low",
+      "interests": [
+        "relaxation"
+      ],
+      "indoor": true,
+      "requiresBooking": false,
+      "isPartner": false,
+      "active": true,
+      "createdAt": "2026-09-01T09:00:00.000Z",
+      "updatedAt": "2026-09-01T09:00:00.000Z",
+      "hotelId": "htl-hotel-veli-a1b2c3",
+      "price": 40
+    },
+    {
+      "id": "exp-veli-roof",
+      "name": "Rooftop sundowner",
+      "description": "The roof terrace opens at six. Narikala on one side, the river on the other.",
+      "type": "HOTEL_ACTIVITY",
+      "category": "hotel",
+      "latitude": 41.69314,
+      "longitude": 44.80217,
+      "durationMin": 60,
+      "openingHours": [
+        {
+          "weekday": 0,
+          "opens": "18:00",
+          "closes": "23:00"
+        },
+        {
+          "weekday": 1,
+          "opens": "18:00",
+          "closes": "23:00"
+        },
+        {
+          "weekday": 2,
+          "opens": "18:00",
+          "closes": "23:00"
+        },
+        {
+          "weekday": 3,
+          "opens": "18:00",
+          "closes": "23:00"
+        },
+        {
+          "weekday": 4,
+          "opens": "18:00",
+          "closes": "23:00"
+        },
+        {
+          "weekday": 5,
+          "opens": "18:00",
+          "closes": "23:00"
+        },
+        {
+          "weekday": 6,
+          "opens": "18:00",
+          "closes": "23:00"
+        }
+      ],
+      "budget": "moderate",
+      "effort": "low",
+      "interests": [
+        "relaxation",
+        "culture"
+      ],
+      "indoor": false,
+      "requiresBooking": false,
+      "isPartner": false,
+      "active": true,
+      "createdAt": "2026-09-01T09:00:00.000Z",
+      "updatedAt": "2026-09-01T09:00:00.000Z",
+      "hotelId": "htl-hotel-veli-a1b2c3",
+      "price": 25
+    },
+    {
+      "id": "exp-veli-breakfast",
+      "name": "Georgian breakfast table",
+      "description": "Nadughi, bread from the courtyard oven, and coffee, served until eleven.",
+      "type": "HOTEL_ACTIVITY",
+      "category": "restaurant",
+      "latitude": 41.69314,
+      "longitude": 44.80217,
+      "durationMin": 50,
+      "openingHours": [
+        {
+          "weekday": 0,
+          "opens": "07:30",
+          "closes": "11:00"
+        },
+        {
+          "weekday": 1,
+          "opens": "07:30",
+          "closes": "11:00"
+        },
+        {
+          "weekday": 2,
+          "opens": "07:30",
+          "closes": "11:00"
+        },
+        {
+          "weekday": 3,
+          "opens": "07:30",
+          "closes": "11:00"
+        },
+        {
+          "weekday": 4,
+          "opens": "07:30",
+          "closes": "11:00"
+        },
+        {
+          "weekday": 5,
+          "opens": "07:30",
+          "closes": "11:00"
+        },
+        {
+          "weekday": 6,
+          "opens": "07:30",
+          "closes": "11:00"
+        }
+      ],
+      "budget": "free",
+      "effort": "low",
+      "interests": [
+        "food",
+        "culture"
+      ],
+      "indoor": true,
+      "requiresBooking": false,
+      "isPartner": false,
+      "active": true,
+      "createdAt": "2026-09-01T09:00:00.000Z",
+      "updatedAt": "2026-09-01T09:00:00.000Z",
+      "hotelId": "htl-hotel-veli-a1b2c3"
+    },
+    {
+      "id": "exp-veli-cooking",
+      "name": "Khinkali workshop",
+      "description": "The kitchen team shows you the fold. You eat what you make.",
+      "type": "HOTEL_ACTIVITY",
+      "category": "experience",
+      "latitude": 41.69314,
+      "longitude": 44.80217,
+      "durationMin": 90,
+      "openingHours": [
+        {
+          "weekday": 0,
+          "opens": "16:00",
+          "closes": "19:00"
+        },
+        {
+          "weekday": 1,
+          "opens": "16:00",
+          "closes": "19:00"
+        },
+        {
+          "weekday": 2,
+          "opens": "16:00",
+          "closes": "19:00"
+        },
+        {
+          "weekday": 3,
+          "opens": "16:00",
+          "closes": "19:00"
+        },
+        {
+          "weekday": 4,
+          "opens": "16:00",
+          "closes": "19:00"
+        },
+        {
+          "weekday": 5,
+          "opens": "16:00",
+          "closes": "19:00"
+        },
+        {
+          "weekday": 6,
+          "opens": "16:00",
+          "closes": "19:00"
+        }
+      ],
+      "budget": "moderate",
+      "effort": "medium",
+      "interests": [
+        "food",
+        "culture"
+      ],
+      "indoor": true,
+      "requiresBooking": true,
+      "isPartner": false,
+      "active": true,
+      "createdAt": "2026-09-01T09:00:00.000Z",
+      "updatedAt": "2026-09-01T09:00:00.000Z",
+      "hotelId": "htl-hotel-veli-a1b2c3",
+      "price": 55
+    },
+    {
+      "id": "exp-narikala",
+      "name": "Narikala Fortress",
+      "description": "The fourth-century walls above the old town. The cable car runs from Rike Park.",
+      "type": "PARTNER_ATTRACTION",
+      "category": "landmark",
+      "latitude": 41.6879,
+      "longitude": 44.8089,
+      "durationMin": 75,
+      "openingHours": [
+        {
+          "weekday": 0,
+          "opens": "09:00",
+          "closes": "20:00"
+        },
+        {
+          "weekday": 1,
+          "opens": "09:00",
+          "closes": "20:00"
+        },
+        {
+          "weekday": 2,
+          "opens": "09:00",
+          "closes": "20:00"
+        },
+        {
+          "weekday": 3,
+          "opens": "09:00",
+          "closes": "20:00"
+        },
+        {
+          "weekday": 4,
+          "opens": "09:00",
+          "closes": "20:00"
+        },
+        {
+          "weekday": 5,
+          "opens": "09:00",
+          "closes": "20:00"
+        },
+        {
+          "weekday": 6,
+          "opens": "09:00",
+          "closes": "20:00"
+        }
+      ],
+      "budget": "free",
+      "effort": "medium",
+      "interests": [
+        "sightseeing",
+        "culture",
+        "sports"
+      ],
+      "indoor": false,
+      "requiresBooking": false,
+      "isPartner": true,
+      "active": true,
+      "createdAt": "2026-09-01T09:00:00.000Z",
+      "updatedAt": "2026-09-01T09:00:00.000Z",
+      "modelId": "courtyard-duck-1925d"
+    },
+    {
+      "id": "exp-qvevri",
+      "name": "Qvevri Wine Cellar",
+      "description": "A local winemaker walks you through the qvevri tradition and pours five varieties.",
+      "type": "PARTNER_EXPERIENCE",
+      "category": "experience",
+      "latitude": 41.6925,
+      "longitude": 44.8042,
+      "durationMin": 120,
+      "openingHours": [
+        {
+          "weekday": 0,
+          "opens": "11:00",
+          "closes": "20:00"
+        },
+        {
+          "weekday": 1,
+          "opens": "11:00",
+          "closes": "20:00"
+        },
+        {
+          "weekday": 2,
+          "opens": "11:00",
+          "closes": "20:00"
+        },
+        {
+          "weekday": 3,
+          "opens": "11:00",
+          "closes": "20:00"
+        },
+        {
+          "weekday": 4,
+          "opens": "11:00",
+          "closes": "20:00"
+        },
+        {
+          "weekday": 5,
+          "opens": "11:00",
+          "closes": "20:00"
+        },
+        {
+          "weekday": 6,
+          "opens": "11:00",
+          "closes": "20:00"
+        }
+      ],
+      "budget": "premium",
+      "effort": "low",
+      "interests": [
+        "food",
+        "culture"
+      ],
+      "indoor": true,
+      "requiresBooking": true,
+      "isPartner": true,
+      "active": true,
+      "createdAt": "2026-09-01T09:00:00.000Z",
+      "updatedAt": "2026-09-01T09:00:00.000Z",
+      "price": 45
+    },
+    {
+      "id": "exp-riverside",
+      "name": "Riverside Table",
+      "description": "Kakhetian cooking on a terrace over the Mtkvari. The clay-oven bread arrives first.",
+      "type": "PARTNER_RESTAURANT",
+      "category": "restaurant",
+      "latitude": 41.6902,
+      "longitude": 44.8064,
+      "durationMin": 90,
+      "openingHours": [
+        {
+          "weekday": 0,
+          "opens": "12:00",
+          "closes": "23:00"
+        },
+        {
+          "weekday": 1,
+          "opens": "12:00",
+          "closes": "23:00"
+        },
+        {
+          "weekday": 2,
+          "opens": "12:00",
+          "closes": "23:00"
+        },
+        {
+          "weekday": 3,
+          "opens": "12:00",
+          "closes": "23:00"
+        },
+        {
+          "weekday": 4,
+          "opens": "12:00",
+          "closes": "23:00"
+        },
+        {
+          "weekday": 5,
+          "opens": "12:00",
+          "closes": "23:00"
+        },
+        {
+          "weekday": 6,
+          "opens": "12:00",
+          "closes": "23:00"
+        }
+      ],
+      "budget": "moderate",
+      "effort": "low",
+      "interests": [
+        "food",
+        "culture"
+      ],
+      "indoor": false,
+      "requiresBooking": false,
+      "isPartner": true,
+      "active": true,
+      "createdAt": "2026-09-01T09:00:00.000Z",
+      "updatedAt": "2026-09-01T09:00:00.000Z",
+      "price": 60
+    },
+    {
+      "id": "exp-sulphur",
+      "name": "Abanotubani sulphur baths",
+      "description": "The domed brick baths in the old quarter. Private rooms by the hour.",
+      "type": "PARTNER_EXPERIENCE",
+      "category": "experience",
+      "latitude": 41.6884,
+      "longitude": 44.8098,
+      "durationMin": 60,
+      "openingHours": [
+        {
+          "weekday": 0,
+          "opens": "08:00",
+          "closes": "23:00"
+        },
+        {
+          "weekday": 1,
+          "opens": "08:00",
+          "closes": "23:00"
+        },
+        {
+          "weekday": 2,
+          "opens": "08:00",
+          "closes": "23:00"
+        },
+        {
+          "weekday": 3,
+          "opens": "08:00",
+          "closes": "23:00"
+        },
+        {
+          "weekday": 4,
+          "opens": "08:00",
+          "closes": "23:00"
+        },
+        {
+          "weekday": 5,
+          "opens": "08:00",
+          "closes": "23:00"
+        },
+        {
+          "weekday": 6,
+          "opens": "08:00",
+          "closes": "23:00"
+        }
+      ],
+      "budget": "moderate",
+      "effort": "low",
+      "interests": [
+        "relaxation",
+        "culture"
+      ],
+      "indoor": true,
+      "requiresBooking": true,
+      "isPartner": true,
+      "active": true,
+      "createdAt": "2026-09-01T09:00:00.000Z",
+      "updatedAt": "2026-09-01T09:00:00.000Z",
+      "price": 50
+    },
+    {
+      "id": "exp-botanical",
+      "name": "Botanical Garden",
+      "description": "The old khan's gardens behind the fortress ridge, with the waterfall path.",
+      "type": "PARTNER_ATTRACTION",
+      "category": "nature",
+      "latitude": 41.6871,
+      "longitude": 44.8003,
+      "durationMin": 90,
+      "openingHours": [
+        {
+          "weekday": 0,
+          "opens": "09:00",
+          "closes": "19:00"
+        },
+        {
+          "weekday": 1,
+          "opens": "09:00",
+          "closes": "19:00"
+        },
+        {
+          "weekday": 2,
+          "opens": "09:00",
+          "closes": "19:00"
+        },
+        {
+          "weekday": 3,
+          "opens": "09:00",
+          "closes": "19:00"
+        },
+        {
+          "weekday": 4,
+          "opens": "09:00",
+          "closes": "19:00"
+        },
+        {
+          "weekday": 5,
+          "opens": "09:00",
+          "closes": "19:00"
+        },
+        {
+          "weekday": 6,
+          "opens": "09:00",
+          "closes": "19:00"
+        }
+      ],
+      "budget": "free",
+      "effort": "medium",
+      "interests": [
+        "nature",
+        "sports",
+        "relaxation"
+      ],
+      "indoor": false,
+      "requiresBooking": false,
+      "isPartner": true,
+      "active": true,
+      "createdAt": "2026-09-01T09:00:00.000Z",
+      "updatedAt": "2026-09-01T09:00:00.000Z"
+    },
+    {
+      "id": "exp-jazz",
+      "name": "Blue Balcony jazz room",
+      "description": "A basement room off Rustaveli. Two sets a night, no cover before nine.",
+      "type": "PARTNER_ACTIVITY",
+      "category": "entertainment",
+      "latitude": 41.6968,
+      "longitude": 44.7995,
+      "durationMin": 100,
+      "openingHours": [
+        {
+          "weekday": 0,
+          "opens": "20:00",
+          "closes": "23:30"
+        },
+        {
+          "weekday": 1,
+          "opens": "20:00",
+          "closes": "23:30"
+        },
+        {
+          "weekday": 2,
+          "opens": "20:00",
+          "closes": "23:30"
+        },
+        {
+          "weekday": 3,
+          "opens": "20:00",
+          "closes": "23:30"
+        },
+        {
+          "weekday": 4,
+          "opens": "20:00",
+          "closes": "23:30"
+        },
+        {
+          "weekday": 5,
+          "opens": "20:00",
+          "closes": "23:30"
+        },
+        {
+          "weekday": 6,
+          "opens": "20:00",
+          "closes": "23:30"
+        }
+      ],
+      "budget": "moderate",
+      "effort": "low",
+      "interests": [
+        "events",
+        "nightlife",
+        "culture"
+      ],
+      "indoor": true,
+      "requiresBooking": false,
+      "isPartner": true,
+      "active": true,
+      "createdAt": "2026-09-01T09:00:00.000Z",
+      "updatedAt": "2026-09-01T09:00:00.000Z",
+      "price": 30
+    },
+    {
+      "id": "exp-mtatsminda",
+      "name": "Mtatsminda funicular and ridge",
+      "description": "The 1905 funicular to the ridge park, and the walk along the top.",
+      "type": "PARTNER_TOUR",
+      "category": "adventure",
+      "latitude": 41.6953,
+      "longitude": 44.7846,
+      "durationMin": 150,
+      "openingHours": [
+        {
+          "weekday": 0,
+          "opens": "09:00",
+          "closes": "22:00"
+        },
+        {
+          "weekday": 1,
+          "opens": "09:00",
+          "closes": "22:00"
+        },
+        {
+          "weekday": 2,
+          "opens": "09:00",
+          "closes": "22:00"
+        },
+        {
+          "weekday": 3,
+          "opens": "09:00",
+          "closes": "22:00"
+        },
+        {
+          "weekday": 4,
+          "opens": "09:00",
+          "closes": "22:00"
+        },
+        {
+          "weekday": 5,
+          "opens": "09:00",
+          "closes": "22:00"
+        },
+        {
+          "weekday": 6,
+          "opens": "09:00",
+          "closes": "22:00"
+        }
+      ],
+      "budget": "moderate",
+      "effort": "high",
+      "interests": [
+        "adventure",
+        "sports",
+        "sightseeing",
+        "nature"
+      ],
+      "indoor": false,
+      "requiresBooking": false,
+      "isPartner": true,
+      "active": true,
+      "createdAt": "2026-09-01T09:00:00.000Z",
+      "updatedAt": "2026-09-01T09:00:00.000Z",
+      "price": 35
+    },
+    {
+      "id": "exp-museum-soviet",
+      "name": "Museum of Soviet Occupation",
+      "description": "One floor of the national museum, covering 1921 to 1991.",
+      "type": "PARTNER_ATTRACTION",
+      "category": "museum",
+      "latitude": 41.6975,
+      "longitude": 44.7999,
+      "durationMin": 70,
+      "openingHours": [
+        {
+          "weekday": 2,
+          "opens": "10:00",
+          "closes": "18:00"
+        },
+        {
+          "weekday": 3,
+          "opens": "10:00",
+          "closes": "18:00"
+        },
+        {
+          "weekday": 4,
+          "opens": "10:00",
+          "closes": "18:00"
+        },
+        {
+          "weekday": 5,
+          "opens": "10:00",
+          "closes": "18:00"
+        },
+        {
+          "weekday": 6,
+          "opens": "10:00",
+          "closes": "18:00"
+        },
+        {
+          "weekday": 0,
+          "opens": "10:00",
+          "closes": "18:00"
+        }
+      ],
+      "budget": "moderate",
+      "effort": "low",
+      "interests": [
+        "culture",
+        "sightseeing"
+      ],
+      "indoor": true,
+      "requiresBooking": false,
+      "isPartner": true,
+      "active": true,
+      "createdAt": "2026-09-01T09:00:00.000Z",
+      "updatedAt": "2026-09-01T09:00:00.000Z",
+      "price": 20
+    },
+    {
+      "id": "exp-dry-bridge",
+      "name": "Dry Bridge market",
+      "description": "Saturday and Sunday only. Soviet cameras, enamel pins, and a lot of cutlery.",
+      "type": "PARTNER_ATTRACTION",
+      "category": "landmark",
+      "latitude": 41.6997,
+      "longitude": 44.8046,
+      "durationMin": 60,
+      "openingHours": [
+        {
+          "weekday": 6,
+          "opens": "10:00",
+          "closes": "17:00"
+        },
+        {
+          "weekday": 0,
+          "opens": "10:00",
+          "closes": "17:00"
+        }
+      ],
+      "budget": "free",
+      "effort": "low",
+      "interests": [
+        "shopping",
+        "culture",
+        "sightseeing"
+      ],
+      "indoor": false,
+      "requiresBooking": false,
+      "isPartner": true,
+      "active": true,
+      "createdAt": "2026-09-01T09:00:00.000Z",
+      "updatedAt": "2026-09-01T09:00:00.000Z"
+    },
+    {
+      "id": "exp-pottery",
+      "name": "Clay studio on Betlemi",
+      "description": "Two hours at the wheel with a maker from the old quarter. Bring nothing.",
+      "type": "PARTNER_EXPERIENCE",
+      "category": "experience",
+      "latitude": 41.689,
+      "longitude": 44.8073,
+      "durationMin": 120,
+      "openingHours": [
+        {
+          "weekday": 0,
+          "opens": "11:00",
+          "closes": "18:00"
+        },
+        {
+          "weekday": 1,
+          "opens": "11:00",
+          "closes": "18:00"
+        },
+        {
+          "weekday": 2,
+          "opens": "11:00",
+          "closes": "18:00"
+        },
+        {
+          "weekday": 3,
+          "opens": "11:00",
+          "closes": "18:00"
+        },
+        {
+          "weekday": 4,
+          "opens": "11:00",
+          "closes": "18:00"
+        },
+        {
+          "weekday": 5,
+          "opens": "11:00",
+          "closes": "18:00"
+        },
+        {
+          "weekday": 6,
+          "opens": "11:00",
+          "closes": "18:00"
+        }
+      ],
+      "budget": "moderate",
+      "effort": "medium",
+      "interests": [
+        "culture"
+      ],
+      "indoor": true,
+      "requiresBooking": true,
+      "isPartner": true,
+      "active": true,
+      "createdAt": "2026-09-01T09:00:00.000Z",
+      "updatedAt": "2026-09-01T09:00:00.000Z",
+      "price": 65
+    }
+  ],
+  "hotelPartners": [
+    {
+      "id": "prt-narikala",
+      "hotelId": "htl-hotel-veli-a1b2c3",
+      "experienceId": "exp-narikala",
+      "active": true,
+      "priority": 90,
+      "featured": true,
+      "createdAt": "2026-09-01T09:00:00.000Z",
+      "updatedAt": "2026-09-01T09:00:00.000Z",
+      "commissionPct": 0
+    },
+    {
+      "id": "prt-qvevri",
+      "hotelId": "htl-hotel-veli-a1b2c3",
+      "experienceId": "exp-qvevri",
+      "active": true,
+      "priority": 85,
+      "featured": true,
+      "createdAt": "2026-09-01T09:00:00.000Z",
+      "updatedAt": "2026-09-01T09:00:00.000Z",
+      "hotelDescription": "Our neighbours two streets down. Tell them you are staying with us.",
+      "commissionPct": 12
+    },
+    {
+      "id": "prt-riverside",
+      "hotelId": "htl-hotel-veli-a1b2c3",
+      "experienceId": "exp-riverside",
+      "active": true,
+      "priority": 80,
+      "featured": false,
+      "createdAt": "2026-09-01T09:00:00.000Z",
+      "updatedAt": "2026-09-01T09:00:00.000Z",
+      "commissionPct": 10
+    },
+    {
+      "id": "prt-sulphur",
+      "hotelId": "htl-hotel-veli-a1b2c3",
+      "experienceId": "exp-sulphur",
+      "active": true,
+      "priority": 70,
+      "featured": false,
+      "createdAt": "2026-09-01T09:00:00.000Z",
+      "updatedAt": "2026-09-01T09:00:00.000Z",
+      "commissionPct": 8
+    },
+    {
+      "id": "prt-botanical",
+      "hotelId": "htl-hotel-veli-a1b2c3",
+      "experienceId": "exp-botanical",
+      "active": true,
+      "priority": 60,
+      "featured": false,
+      "createdAt": "2026-09-01T09:00:00.000Z",
+      "updatedAt": "2026-09-01T09:00:00.000Z"
+    },
+    {
+      "id": "prt-jazz",
+      "hotelId": "htl-hotel-veli-a1b2c3",
+      "experienceId": "exp-jazz",
+      "active": true,
+      "priority": 55,
+      "featured": false,
+      "createdAt": "2026-09-01T09:00:00.000Z",
+      "updatedAt": "2026-09-01T09:00:00.000Z",
+      "commissionPct": 0
+    },
+    {
+      "id": "prt-mtatsminda",
+      "hotelId": "htl-hotel-veli-a1b2c3",
+      "experienceId": "exp-mtatsminda",
+      "active": true,
+      "priority": 65,
+      "featured": false,
+      "createdAt": "2026-09-01T09:00:00.000Z",
+      "updatedAt": "2026-09-01T09:00:00.000Z",
+      "commissionPct": 5
+    },
+    {
+      "id": "prt-museum-soviet",
+      "hotelId": "htl-hotel-veli-a1b2c3",
+      "experienceId": "exp-museum-soviet",
+      "active": true,
+      "priority": 50,
+      "featured": false,
+      "createdAt": "2026-09-01T09:00:00.000Z",
+      "updatedAt": "2026-09-01T09:00:00.000Z"
+    },
+    {
+      "id": "prt-dry-bridge",
+      "hotelId": "htl-hotel-veli-a1b2c3",
+      "experienceId": "exp-dry-bridge",
+      "active": true,
+      "priority": 40,
+      "featured": false,
+      "createdAt": "2026-09-01T09:00:00.000Z",
+      "updatedAt": "2026-09-01T09:00:00.000Z"
+    },
+    {
+      "id": "prt-pottery",
+      "hotelId": "htl-hotel-veli-a1b2c3",
+      "experienceId": "exp-pottery",
+      "active": true,
+      "priority": 45,
+      "featured": false,
+      "createdAt": "2026-09-01T09:00:00.000Z",
+      "updatedAt": "2026-09-01T09:00:00.000Z",
+      "commissionPct": 15
+    }
+  ],
+  "hotelEvents": [
+    {
+      "id": "evt-live-music",
+      "hotelId": "htl-hotel-veli-a1b2c3",
+      "name": "Live music on the roof",
+      "description": "A trio from the conservatoire, two sets, from half six.",
+      "date": "+0",
+      "startTime": "18:30",
+      "endTime": "20:30",
+      "location": "Roof terrace",
+      "booked": 0,
+      "requiresBooking": false,
+      "interests": [
+        "events",
+        "culture"
+      ],
+      "budget": "free",
+      "effort": "low",
+      "indoor": false,
+      "active": true,
+      "createdAt": "2026-09-01T09:00:00.000Z",
+      "updatedAt": "2026-09-01T09:00:00.000Z",
+      "capacity": 40
+    },
+    {
+      "id": "evt-yoga",
+      "hotelId": "htl-hotel-veli-a1b2c3",
+      "name": "Morning yoga in the courtyard",
+      "description": "Forty minutes, all levels, mats provided.",
+      "date": "+1",
+      "startTime": "08:00",
+      "endTime": "08:40",
+      "location": "Courtyard",
+      "booked": 0,
+      "requiresBooking": false,
+      "interests": [
+        "relaxation",
+        "sports"
+      ],
+      "budget": "free",
+      "effort": "medium",
+      "indoor": false,
+      "active": true,
+      "createdAt": "2026-09-01T09:00:00.000Z",
+      "updatedAt": "2026-09-01T09:00:00.000Z",
+      "capacity": 12
+    },
+    {
+      "id": "evt-tasting",
+      "hotelId": "htl-hotel-veli-a1b2c3",
+      "name": "Kakhetian tasting",
+      "description": "Six wines from the cellar with the sommelier, in the vaulted bar.",
+      "date": "+1",
+      "startTime": "19:00",
+      "endTime": "20:30",
+      "location": "Cellar bar",
+      "booked": 0,
+      "requiresBooking": true,
+      "interests": [
+        "food",
+        "culture",
+        "culture"
+      ],
+      "budget": "moderate",
+      "effort": "low",
+      "indoor": true,
+      "active": true,
+      "createdAt": "2026-09-01T09:00:00.000Z",
+      "updatedAt": "2026-09-01T09:00:00.000Z",
+      "capacity": 14,
+      "price": 45
+    },
+    {
+      "id": "evt-supra",
+      "hotelId": "htl-hotel-veli-a1b2c3",
+      "name": "Supra night",
+      "description": "The long table, a tamada, and everything the kitchen has.",
+      "date": "+2",
+      "startTime": "19:30",
+      "endTime": "22:00",
+      "location": "Dining room",
+      "booked": 0,
+      "requiresBooking": true,
+      "interests": [
+        "food",
+        "culture",
+        "culture",
+        "events"
+      ],
+      "budget": "premium",
+      "effort": "low",
+      "indoor": true,
+      "active": true,
+      "createdAt": "2026-09-01T09:00:00.000Z",
+      "updatedAt": "2026-09-01T09:00:00.000Z",
+      "capacity": 30,
+      "price": 70
+    }
+  ]
+}

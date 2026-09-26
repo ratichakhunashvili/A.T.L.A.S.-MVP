@@ -1,0 +1,113 @@
+/*
+ * The stay panel.
+ *
+ * A strip of days rather than a month grid: a stay is four nights, not a
+ * calendar, and showing February when the guest is here on a Tuesday is
+ * answering a question nobody asked.
+ */
+
+.stay {
+  display: flex;
+  flex-direction: column;
+  gap: 13px;
+  padding: 0 var(--gutter) 18px;
+}
+
+.stay__label {
+  margin-top: 2px;
+}
+
+.stay__label .eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.stay__strip {
+  display: flex;
+  gap: 6px;
+  margin: 0;
+  padding: 2px 0 6px;
+  list-style: none;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+
+.stay__strip::-webkit-scrollbar {
+  display: none;
+}
+
+.stay__day {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  flex: none;
+  width: 44px;
+  padding: 9px 0 11px;
+  border-radius: var(--r-sm);
+  background: var(--color-control);
+  box-shadow: var(--ring-hairline);
+}
+
+.stay__weekday {
+  font-size: var(--fs-10);
+  font-weight: 700;
+  letter-spacing: var(--tracking-eyebrow);
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.stay__date {
+  font-size: var(--fs-17);
+  font-weight: 800;
+  letter-spacing: var(--tracking-tight);
+  color: var(--text-strong);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Today is the day the product actually works on, so it is the only one
+   given any weight. */
+.stay__day[data-today="true"] {
+  background: var(--color-primary);
+  box-shadow: var(--shadow-sm);
+}
+
+.stay__day[data-today="true"] .stay__weekday {
+  color: var(--color-highlight);
+}
+
+.stay__day[data-today="true"] .stay__date {
+  color: var(--color-white);
+}
+
+.stay__day[data-past="true"] {
+  opacity: 0.45;
+}
+
+.stay__dot {
+  position: absolute;
+  bottom: 5px;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--color-highlight);
+}
+
+.stay__note {
+  margin: 0;
+  font-size: var(--fs-12);
+  line-height: 1.45;
+  color: var(--text-muted);
+}
+
+.stay__actions {
+  display: flex;
+  gap: 8px;
+}
+
+.stay__actions .btn {
+  flex: 1;
+}

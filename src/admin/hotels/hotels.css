@@ -1,0 +1,602 @@
+/*
+ * The hotel console.
+ *
+ * `hp` for "hotel panel". Everything is built from the same tokens as the
+ * guest app — the admin is a different audience, not a different product, and
+ * an operator should recognise the navy and the ivory from the map their
+ * guests are looking at.
+ */
+
+.hp {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 18px;
+  max-width: 880px;
+}
+
+.hp__form {
+  gap: 14px;
+}
+
+.hp__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.hp__count {
+  margin: 0;
+  font-size: var(--fs-17);
+  font-weight: 800;
+  letter-spacing: var(--tracking-tight);
+  color: var(--text-strong);
+}
+
+.hp__muted {
+  margin: 2px 0 0;
+  font-size: var(--fs-12);
+  line-height: 1.45;
+  color: var(--text-muted);
+  max-width: 62ch;
+}
+
+.hp__section {
+  margin-top: 12px;
+}
+
+.hp__divider {
+  height: 1px;
+  margin: 8px 0;
+  background: var(--hairline);
+}
+
+/* ---- Rows --------------------------------------------------------------- */
+
+.hp__list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.hp__row {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 11px 13px;
+  border-radius: var(--r-sm);
+  background: var(--color-control);
+  box-shadow: var(--ring-hairline);
+}
+
+.hp__row--tall {
+  padding: 13px;
+  flex-wrap: wrap;
+}
+
+.hp__row--muted,
+.hp__row[data-muted="true"] {
+  opacity: 0.6;
+}
+
+.hp__row-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--r-xs);
+  background: var(--green-900-05);
+  color: var(--color-icon);
+}
+
+.hp__row-icon[data-featured="true"] {
+  background: var(--color-property);
+  color: var(--color-white);
+}
+
+.hp__row-date {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: none;
+  width: 38px;
+  line-height: 1.1;
+}
+
+.hp__row-date strong {
+  font-size: var(--fs-17);
+  font-weight: 800;
+  color: var(--color-action);
+}
+
+.hp__row-date span {
+  font-size: var(--fs-10);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-eyebrow);
+  color: var(--text-muted);
+}
+
+.hp__row-main {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+  min-width: 140px;
+}
+
+.hp__row-title {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: var(--fs-14);
+  font-weight: 700;
+  letter-spacing: var(--tracking-tight);
+  color: var(--text-strong);
+}
+
+.hp__row-sub {
+  font-size: var(--fs-12);
+  color: var(--text-muted);
+}
+
+.hp__row-actions {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.hp__star {
+  color: var(--color-rating);
+  fill: var(--color-rating);
+}
+
+.hp__model {
+  color: var(--color-property);
+}
+
+.hp__badge {
+  padding: 3px 8px;
+  border-radius: var(--r-pill);
+  background: var(--green-900-05);
+  font-size: var(--fs-11);
+  font-weight: 700;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+.hp__badge--warn {
+  background: rgb(229 110 93 / 0.16);
+  color: var(--danger-ink);
+}
+
+/* ---- Priority slider ----------------------------------------------------- */
+
+.hp__priority {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: none;
+}
+
+.hp__priority input {
+  width: 96px;
+  accent-color: var(--color-action);
+}
+
+.hp__priority-value {
+  width: 24px;
+  font-size: var(--fs-12);
+  font-weight: 700;
+  color: var(--color-action);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---- Actions ------------------------------------------------------------- */
+
+.hp__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.hp__warning,
+.hp__dryrun {
+  margin: 0;
+  padding: 10px 13px;
+  border-radius: var(--r-sm);
+  font-size: var(--fs-12);
+  line-height: 1.45;
+}
+
+.hp__warning {
+  background: rgb(255 210 61 / 0.18);
+  color: var(--accent-ink);
+}
+
+.hp__dryrun {
+  background: var(--color-primary);
+  color: var(--color-white);
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: var(--fs-11);
+}
+
+.hp__privacy {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin: 14px 0 0;
+  font-size: var(--fs-11);
+  color: var(--text-muted);
+}
+
+/* ---- QR ----------------------------------------------------------------- */
+
+.hp__qr-card {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 18px;
+  padding: 18px;
+  border-radius: var(--r-lg);
+  background: var(--color-control);
+  box-shadow: var(--ring-hairline), var(--shadow-sm);
+}
+
+.hp__qr-art {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  width: 190px;
+  height: 190px;
+  border-radius: var(--r-md);
+  background: var(--color-control-alt);
+  box-shadow: var(--ring-hairline);
+}
+
+.hp__qr-image {
+  width: 100%;
+  height: 100%;
+  border-radius: var(--r-md);
+}
+
+.hp__qr-side {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  flex: 1;
+  min-width: 200px;
+}
+
+.hp__link {
+  display: block;
+  padding: 9px 11px;
+  border-radius: var(--r-xs);
+  background: var(--green-900-05);
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: var(--fs-12);
+  color: var(--color-primary);
+  word-break: break-all;
+}
+
+.hp__stats {
+  display: flex;
+  gap: 22px;
+}
+
+/* ---- Metrics ------------------------------------------------------------ */
+
+.hp__metrics {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 8px;
+}
+
+.hp__metric {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 13px;
+  border-radius: var(--r-sm);
+  background: var(--color-control);
+  box-shadow: var(--ring-hairline);
+}
+
+.hp__metric-value {
+  font-size: var(--fs-24);
+  font-weight: 800;
+  letter-spacing: var(--tracking-tighter);
+  color: var(--color-primary);
+  font-variant-numeric: tabular-nums;
+}
+
+.hp__metric[data-tone="good"] .hp__metric-value {
+  color: var(--color-success);
+}
+
+.hp__metric-label {
+  font-size: var(--fs-11);
+  color: var(--text-muted);
+}
+
+/* ---- Bars --------------------------------------------------------------- */
+
+.hp__bars {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.hp__bar {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+}
+
+.hp__bar-label {
+  flex: none;
+  width: 110px;
+  font-size: var(--fs-12);
+  font-weight: 600;
+  color: var(--text);
+}
+
+.hp__bar-track {
+  flex: 1;
+  height: 8px;
+  border-radius: var(--r-pill);
+  background: var(--green-900-05);
+  overflow: hidden;
+}
+
+.hp__bar-fill {
+  display: block;
+  height: 100%;
+  border-radius: var(--r-pill);
+  background: var(--color-action);
+}
+
+.hp__bar-value {
+  flex: none;
+  width: 28px;
+  text-align: right;
+  font-size: var(--fs-12);
+  font-weight: 700;
+  color: var(--color-action);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---- Detail and tabs ---------------------------------------------------- */
+
+.hp__detail {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+}
+
+.hp__detail-head {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 18px 12px;
+}
+
+.hp__detail-title {
+  margin: 0;
+  font-size: var(--fs-20);
+  font-weight: 800;
+  letter-spacing: var(--tracking-tighter);
+  color: var(--text-strong);
+}
+
+.hp__tabs {
+  display: flex;
+  gap: 4px;
+  padding: 0 18px;
+  overflow-x: auto;
+  border-bottom: 1px solid var(--hairline);
+}
+
+.hp__tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 13px;
+  border: none;
+  border-bottom: 2px solid transparent;
+  background: none;
+  color: var(--text-muted);
+  font-size: var(--fs-13);
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+  transition:
+    color var(--dur-fast) var(--ease-out),
+    border-color var(--dur-fast) var(--ease-out);
+}
+
+.hp__tab:hover {
+  color: var(--text-strong);
+}
+
+.hp__tab[data-active="true"] {
+  color: var(--color-action);
+  border-bottom-color: var(--color-action);
+}
+
+.hp__tabbody {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+}
+
+/* ---- Pickers and toggles ------------------------------------------------ */
+
+.hp__picker {
+  padding: 14px;
+  border: 1px dashed var(--hairline-strong);
+  border-radius: var(--r-md);
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+
+.hp__toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  font-size: var(--fs-13);
+  font-weight: 600;
+  color: var(--text-strong);
+  cursor: pointer;
+}
+
+.hp__toggle input {
+  accent-color: var(--color-action);
+  width: 16px;
+  height: 16px;
+}
+
+.hp__toggle .field__hint {
+  flex-basis: 100%;
+  margin: 0;
+}
+
+/* ---- Opening hours ------------------------------------------------------ */
+
+.hp__hours {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.hp__hour-row {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.hp__hour-day {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  width: 78px;
+  font-size: var(--fs-12);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.hp__hour-day input {
+  accent-color: var(--color-action);
+}
+
+.input--time {
+  width: 112px;
+}
+
+.hp__hour-closed {
+  font-size: var(--fs-12);
+  color: var(--text-faint);
+}
+
+/* ---- Detail header corrections ------------------------------------------ */
+
+/*
+ * `.admin__back` is designed for the navy bar. Inside the hotel detail it sits
+ * on the warm surface, so it needs the light-surface treatment rather than the
+ * inverted one.
+ */
+.hp__detail-head .admin__back {
+  flex: none;
+  color: var(--text-muted);
+  background: var(--green-900-05);
+}
+
+.hp__detail-head .admin__back:hover {
+  background: var(--green-900-09);
+  color: var(--color-primary);
+}
+
+/*
+ * The shared `.stat` is laid out by `.stat-grid` in the guest panels. Here it
+ * stands alone, so it carries its own stacking.
+ */
+.hp__stats .stat {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.hp__stats .stat__value {
+  font-size: var(--fs-20);
+  font-weight: 800;
+  line-height: 1.1;
+  color: var(--color-primary);
+  font-variant-numeric: tabular-nums;
+}
+
+.hp__stats .stat__label {
+  font-size: var(--fs-11);
+  color: var(--text-muted);
+}
+
+/* Destructive actions sit apart from the rest, not beside Save. */
+.hp__delete {
+  margin-left: auto;
+}
+
+/* ---- Grouped sections inside a form ------------------------------------- */
+
+/*
+ * An achievement and a printed code are separate objects that happen to be
+ * edited on the same screen. Boxing them says so, without sending the admin
+ * to another tab to find them.
+ */
+.hp__block {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 15px;
+  border: 1px solid var(--hairline);
+  border-radius: var(--r-md);
+  background: var(--color-control-alt);
+}
+
+.hp__block-head {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+}
+
+.hp__disclose {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  align-self: flex-start;
+  margin-top: 8px;
+  padding: 4px 0;
+  border: none;
+  background: none;
+  font-size: var(--fs-12);
+  font-weight: 600;
+  color: var(--color-action);
+  cursor: pointer;
+}
+
+.hp__disclose[aria-expanded="true"] svg {
+  transform: rotate(180deg);
+}
+
+.hp__disclose svg {
+  transition: transform var(--dur-fast) var(--ease-out);
+}

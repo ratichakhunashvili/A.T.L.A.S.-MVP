@@ -1,9 +1,14 @@
 /* ---- Place markers ------------------------------------------------------ */
 /*
- * A marker is a lollipop: a round ivory head, a short stem, and a soft ground
- * shadow so it reads as standing on the map rather than floating over it.
- * Labels are opt-in — only the hotel and the selected place carry one, because
- * a dozen permanent labels would bury the geography.
+ * A marker is a lollipop: a round coloured head, a short stem, and a soft
+ * ground shadow so it reads as standing on the map rather than floating over
+ * it.
+ *
+ * Two things drive how loud a marker is. Its *family* sets the colour — where
+ * you sleep, eat, taste, look at, or do something. Its *tier* sets the size
+ * and weight, from the nearest place to the guest down to the ones that are a
+ * walk away. Together they let the map answer "what is worth walking to from
+ * here?" before a single label is read.
  */
 
 .place-marker {
@@ -18,21 +23,37 @@
 }
 
 .place-marker__label {
+  display: flex;
+  align-items: center;
+  gap: 5px;
   margin-bottom: 7px;
-  max-width: 168px;
+  max-width: 210px;
   padding: 4px 10px 5px;
   border-radius: var(--r-pill);
-  background: var(--ivory);
+  background: var(--surface-raised);
   color: var(--text-strong);
   font-size: var(--fs-11);
   font-weight: 700;
   letter-spacing: var(--tracking-tight);
   white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  box-shadow: var(--shadow-md);
+  box-shadow: var(--shadow-md), var(--ring-hairline);
   transform-origin: bottom center;
   animation: marker-label-in var(--dur-fast) var(--ease-spring) backwards;
+}
+
+.place-marker__name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* The distance reading rides in the same pill, one step quieter. */
+.place-marker__distance {
+  flex: none;
+  padding-left: 6px;
+  border-left: 1px solid var(--hairline);
+  color: var(--color-action);
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
 }
 
 @keyframes marker-in {
@@ -51,28 +72,31 @@
 
 .place-marker__pin {
   position: relative;
-  /* Markers that arrive on a zoom threshold should appear, not pop. */
-  animation: marker-in 260ms var(--ease-spring) backwards;
   display: grid;
   place-items: center;
   width: 34px;
   height: 34px;
   border-radius: 50%;
-  background: var(--ivory);
-  color: var(--green-900);
-  box-shadow: var(--shadow-float);
+  /* Family colour, falling back to the hotel green if none is set. */
+  background: var(--marker-color, var(--green-900));
+  color: var(--marker-ink, var(--ivory));
+  box-shadow:
+    0 0 0 2.5px var(--surface-raised),
+    var(--shadow-float);
+  animation: marker-in 260ms var(--ease-spring) backwards;
   transition:
     transform var(--dur-fast) var(--ease-spring),
-    background-color var(--dur-fast) var(--ease-out),
-    color var(--dur-fast) var(--ease-out),
-    box-shadow var(--dur-fast) var(--ease-out);
+    width var(--dur-fast) var(--ease-spring),
+    height var(--dur-fast) var(--ease-spring),
+    box-shadow var(--dur-fast) var(--ease-out),
+    opacity var(--dur-fast) var(--ease-out);
 }
 
 .place-marker__stem {
   width: 2px;
   height: 9px;
   border-radius: 0 0 1px 1px;
-  background: linear-gradient(var(--ivory), var(--ivory-34));
+  background: linear-gradient(var(--surface-raised), rgb(255 255 255 / 0));
 }
 
 .place-marker__ground {
@@ -80,30 +104,109 @@
   height: 4px;
   margin-top: 1px;
   border-radius: 50%;
-  background: rgb(7 16 12 / 0.45);
+  background: rgb(23 35 29 / 0.3);
   filter: blur(1.5px);
 }
 
-/* Visited places carry a small yellow tick. */
+/* Visited places carry a small tick. */
 .place-marker__badge {
   position: absolute;
-  top: -2px;
-  right: -3px;
+  top: -3px;
+  right: -4px;
   display: grid;
   place-items: center;
   width: 15px;
   height: 15px;
   border-radius: 50%;
-  background: var(--yellow);
-  color: var(--accent-ink);
-  box-shadow: 0 0 0 2px var(--ivory);
+  /* A visited place is the system's completed green. */
+  background: var(--color-success);
+  color: var(--color-white);
+  box-shadow: 0 0 0 2px var(--surface-raised);
 }
 
-/* -- States --------------------------------------------------------------- */
+/* ---- Family colours ------------------------------------------------------ */
+
+.place-marker[data-family="hotel"] {
+  --marker-color: var(--cat-hotel);
+  --marker-ink: var(--cat-hotel-ink);
+}
+.place-marker[data-family="food"] {
+  --marker-color: var(--cat-food);
+  --marker-ink: var(--cat-food-ink);
+}
+.place-marker[data-family="tasting"] {
+  --marker-color: var(--cat-tasting);
+  --marker-ink: var(--cat-tasting-ink);
+}
+.place-marker[data-family="culture"] {
+  --marker-color: var(--cat-culture);
+  --marker-ink: var(--cat-culture-ink);
+}
+.place-marker[data-family="nature"] {
+  --marker-color: var(--cat-nature);
+  --marker-ink: var(--cat-nature-ink);
+}
+.place-marker[data-family="active"] {
+  --marker-color: var(--cat-active);
+  --marker-ink: var(--cat-active-ink);
+}
+
+/* ---- Proximity tiers ----------------------------------------------------- */
+/*
+ * The nearest place is the loudest thing on the map after the hotel: bigger,
+ * with a soft ring in its own colour spreading onto the ground around it.
+ */
+
+.place-marker[data-tier="nearest"] .place-marker__pin {
+  width: 42px;
+  height: 42px;
+  box-shadow:
+    0 0 0 3px var(--surface-raised),
+    0 0 0 9px color-mix(in srgb, var(--marker-color) 26%, transparent),
+    var(--shadow-float);
+}
+
+/* A walk away: present, but clearly second rank. */
+.place-marker[data-tier="far"] .place-marker__pin {
+  width: 26px;
+  height: 26px;
+  opacity: 0.62;
+  box-shadow:
+    0 0 0 2px var(--surface-raised),
+    var(--shadow-sm);
+}
+
+.place-marker[data-tier="far"] .place-marker__ground {
+  opacity: 0.5;
+}
+
+/* The hotel is the anchor of the whole experience, at any distance. */
+.place-marker[data-family="hotel"] .place-marker__pin {
+  width: 42px;
+  height: 42px;
+  opacity: 1;
+  box-shadow:
+    0 0 0 3px var(--surface-raised),
+    0 0 0 3.5px var(--color-highlight),
+    var(--shadow-float);
+}
+
+.place-marker[data-family="hotel"] .place-marker__label {
+  background: var(--color-primary);
+  color: var(--color-white);
+}
+
+.place-marker[data-family="hotel"] .place-marker__distance {
+  border-left-color: rgb(255 255 255 / 0.3);
+  color: var(--color-highlight);
+}
+
+/* -- Interaction states --------------------------------------------------- */
 
 @media (hover: hover) {
   .place-marker:hover .place-marker__pin {
-    transform: translateY(-2px) scale(1.07);
+    transform: translateY(-2px) scale(1.08);
+    opacity: 1;
   }
 }
 
@@ -113,48 +216,28 @@
 }
 
 .place-marker[data-selected="true"] .place-marker__pin {
-  background: var(--green-900);
-  color: var(--ivory);
-  transform: translateY(-3px) scale(1.16);
+  transform: translateY(-3px) scale(1.1);
+  opacity: 1;
   box-shadow:
-    0 0 0 3px var(--yellow),
+    0 0 0 3px var(--surface-raised),
+    0 0 0 6px var(--color-action),
     var(--shadow-lg);
-}
-
-.place-marker[data-selected="true"] .place-marker__badge {
-  box-shadow: 0 0 0 2px var(--green-900);
-}
-
-/* The hotel is the anchor of the whole experience — always dark, always named. */
-.place-marker[data-category="hotel"] .place-marker__pin {
-  width: 40px;
-  height: 40px;
-  background: var(--green-900);
-  color: var(--ivory);
-  box-shadow:
-    0 0 0 2px var(--yellow),
-    var(--shadow-float);
-}
-
-.place-marker[data-category="hotel"] .place-marker__label {
-  background: var(--green-900);
-  color: var(--ivory);
 }
 
 /* The next step of the running mission gets a slow halo. */
 .place-marker[data-highlight="true"] .place-marker__pin::after {
   content: "";
   position: absolute;
-  inset: -4px;
+  inset: -5px;
   border-radius: 50%;
-  border: 2px solid var(--yellow);
+  border: 2px solid var(--color-highlight);
   animation: marker-halo 2.6s var(--ease-out) infinite;
   pointer-events: none;
 }
 
 @keyframes marker-halo {
   0% {
-    opacity: 0.85;
+    opacity: 0.9;
     transform: scale(1);
   }
   70%,
@@ -164,17 +247,7 @@
   }
 }
 
-/* Places not yet visited sit back a little. */
-.place-marker[data-unlocked="false"] .place-marker__pin {
-  background: var(--ivory-88);
-}
-
 /* ---- 3D model anchors --------------------------------------------------- */
-/*
- * Outlined rather than filled, so a model's ground marker never competes with
- * a place. It also guarantees a model stays tappable even if its GLB is slow
- * or fails to arrive.
- */
 
 .model-anchor {
   display: flex;
@@ -183,6 +256,7 @@
   padding: 8px;
   margin: -8px;
   background: none;
+  position: relative;
 }
 
 /*
@@ -197,8 +271,10 @@
   width: 34px;
   height: 34px;
   border-radius: 50%;
-  border: 1.5px solid var(--ivory-34);
-  background: radial-gradient(closest-side, rgb(245 241 231 / 0.09), transparent 70%);
+  /* A place with a 3D model is a partner place, and the system gives that the
+     property blue — enough to read as special without a bigger marker. */
+  border: 1.5px solid rgb(30 96 145 / 0.65);
+  background: radial-gradient(closest-side, rgb(30 96 145 / 0.2), transparent 70%);
   transform: scaleY(0.4);
   transition:
     transform var(--dur-fast) var(--ease-spring),
@@ -206,9 +282,71 @@
     background-color var(--dur-fast) var(--ease-out);
 }
 
+/*
+ * The halo.
+ *
+ * One slow, very faint pulse. It is what makes a modelled attraction catch the
+ * eye on a map full of dots, and it is deliberately slower and fainter than
+ * anything else that moves — a map that throbs is a map nobody can read.
+ */
+.model-anchor__pulse {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 34px;
+  height: 34px;
+  margin: -17px 0 0 -17px;
+  border-radius: 50%;
+  border: 1.5px solid var(--color-property);
+  transform: scaleY(0.4);
+  opacity: 0;
+  animation: anchor-pulse 3.6s var(--ease-out) infinite;
+  pointer-events: none;
+}
+
+@keyframes anchor-pulse {
+  0% {
+    transform: scaleY(0.4) scale(0.7);
+    opacity: 0.55;
+  }
+  70% {
+    transform: scaleY(0.4) scale(1.9);
+    opacity: 0;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .model-anchor__pulse {
+    animation: none;
+    opacity: 0.3;
+    transform: scaleY(0.4) scale(1.25);
+  }
+}
+
+/*
+ * The badge. A single small mark sitting at the top of the ring, so a
+ * modelled attraction is identifiable even at the zoom where the model itself
+ * is only a few pixels tall.
+ */
+.model-anchor__badge {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 9px;
+  height: 9px;
+  margin: -17px 0 0 -4.5px;
+  border-radius: 50%;
+  background: var(--color-property);
+  box-shadow: 0 0 0 2px var(--color-control);
+  transition: background var(--dur-fast) var(--ease-out);
+}
+
 @media (hover: hover) {
   .model-anchor:hover .model-anchor__ring {
-    border-color: var(--ivory-70);
+    border-color: var(--color-property);
     transform: scaleY(0.4) scale(1.08);
   }
 }
@@ -219,29 +357,88 @@
 }
 
 .model-anchor[data-selected="true"] .model-anchor__ring {
-  border-color: var(--yellow);
-  background: radial-gradient(closest-side, rgb(255 215 90 / 0.22), transparent 70%);
+  border-color: var(--color-property);
+  background: radial-gradient(closest-side, rgb(30 96 145 / 0.3), transparent 70%);
   transform: scaleY(0.4) scale(1.12);
 }
 
+/*
+ * Already collected.
+ *
+ * The completion green, and the pulse stops — the halo is an invitation, and
+ * somewhere the guest has already been does not need inviting to.
+ */
+.model-anchor[data-visited="true"] .model-anchor__ring {
+  border-color: rgb(0 98 79 / 0.7);
+  background: radial-gradient(closest-side, rgb(0 98 79 / 0.2), transparent 70%);
+}
+
+.model-anchor[data-visited="true"] .model-anchor__badge {
+  background: var(--color-success);
+}
+
+.model-anchor[data-visited="true"] .model-anchor__pulse {
+  animation: none;
+  opacity: 0;
+}
+
 /* ---- Guest location ----------------------------------------------------- */
+/*
+ * "You are here": an emerald core in a white collar, with one slow ring
+ * spreading outward. The pulse is deliberately faint — findable at a glance,
+ * and invisible the rest of the time.
+ */
 
 .user-dot {
   position: relative;
   width: 18px;
   height: 18px;
   border-radius: 50%;
-  background: var(--yellow);
+  /* "This is ME": the GPS blue, ringed in white so it can never be mistaken
+     for the hotel, a partner or an ordinary point of interest. */
+  background: var(--color-action);
   box-shadow:
-    0 0 0 3px rgb(18 35 27 / 0.85),
-    0 2px 10px rgb(255 215 90 / 0.5);
+    0 0 0 3.5px var(--color-white),
+    0 2px 9px var(--color-shadow);
 }
 
 .user-dot::after {
   content: "";
   position: absolute;
-  inset: -6px;
+  inset: -7px;
   border-radius: 50%;
-  border: 1.5px solid var(--yellow-40);
-  animation: marker-halo 3s var(--ease-out) infinite;
+  border: 2px solid rgb(217 237 146 / 0.85);
+  animation: user-pulse 3.2s var(--ease-out) infinite;
+  pointer-events: none;
+}
+
+/*
+ * A looser fix gets a hollow dot. Solid reads as "here"; a ring reads as
+ * "somewhere around here", which is what the accuracy circle is also saying.
+ */
+.user-dot[data-quality="approximate"],
+.user-dot[data-quality="coarse"] {
+  background: var(--color-white);
+  box-shadow:
+    inset 0 0 0 4px var(--color-action),
+    0 0 0 2.5px var(--color-white),
+    0 2px 9px var(--color-shadow);
+}
+
+/* At city scale the accuracy ring carries the message; the pulse is noise. */
+.user-dot[data-quality="coarse"]::after {
+  animation: none;
+  opacity: 0;
+}
+
+@keyframes user-pulse {
+  0% {
+    opacity: 0.7;
+    transform: scale(0.85);
+  }
+  70%,
+  100% {
+    opacity: 0;
+    transform: scale(2.1);
+  }
 }

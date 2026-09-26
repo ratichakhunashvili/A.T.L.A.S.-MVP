@@ -22,6 +22,11 @@ interface MapMarkerProps {
   zIndex?: number;
   /** Used by the admin editor to place a model by hand. */
   draggable?: boolean;
+  /**
+   * False for decoration. A marker element is clickable by default, so a
+   * purely informational one would silently swallow map clicks underneath it.
+   */
+  interactive?: boolean;
   onDragEnd?: (position: { longitude: number; latitude: number }) => void;
 }
 
@@ -32,6 +37,7 @@ export function MapMarker({
   anchor = "bottom",
   zIndex = 1,
   draggable = false,
+  interactive = true,
   onDragEnd,
 }: MapMarkerProps) {
   const map = useMap();
@@ -82,8 +88,11 @@ export function MapMarker({
   }, [longitude, latitude]);
 
   useEffect(() => {
-    if (elementRef.current) elementRef.current.style.zIndex = String(zIndex);
-  }, [zIndex]);
+    const element = elementRef.current;
+    if (!element) return;
+    element.style.zIndex = String(zIndex);
+    element.style.pointerEvents = interactive ? "" : "none";
+  }, [zIndex, interactive]);
 
   return createPortal(children, elementRef.current);
 }

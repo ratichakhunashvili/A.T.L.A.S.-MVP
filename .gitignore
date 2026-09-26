@@ -6,3 +6,9 @@ dist-ssr
 *.local
 .DS_Store
 .vite
+
+.vercel
+.env*
+
+# Screenshots from the e2e suites — evidence, not artefacts.
+tests/output

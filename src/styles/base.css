@@ -26,8 +26,10 @@ html {
 }
 
 body {
-  background: var(--ink);
-  color: var(--text-on-dark);
+  /* A daytime ground tone, so the first paint before tiles arrive already
+     belongs to the same world as the map. */
+  background: var(--map-backdrop);
+  color: var(--text-strong);
   font-family: var(--font-sans);
   font-size: var(--fs-15);
   font-weight: 450;
@@ -90,15 +92,17 @@ h4 {
 }
 
 :focus-visible {
-  outline: 2px solid var(--yellow);
+  /* Emerald, not yellow: on a bright map and ivory panels a yellow ring is
+     nearly invisible, which is the one thing a focus ring may not be. */
+  outline: 2px solid var(--color-action);
   outline-offset: 3px;
   border-radius: var(--r-xs);
 }
 
-/* On dark chrome the yellow ring needs a dark halo to stay readable. */
+/* Over dark chrome the ring flips to yellow, with a halo to hold it. */
 .on-dark :focus-visible {
-  outline-color: var(--yellow);
-  box-shadow: 0 0 0 5px rgb(18 35 27 / 0.55);
+  outline-color: var(--color-highlight);
+  box-shadow: 0 0 0 5px rgb(0 53 94 / 0.55);
 }
 
 /* ---- Shared primitives ------------------------------------------------- */

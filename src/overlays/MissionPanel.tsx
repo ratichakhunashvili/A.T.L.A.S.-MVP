@@ -25,7 +25,17 @@ export function MissionPanel({ open, onClose, missions, onGoToPlace }: MissionPa
   const [filter, setFilter] = useState<PlaceCategory | "all">("all");
 
   const active = missions.find((mission) => mission.active) ?? missions[0];
-  const others = missions.filter((mission) => mission.id !== active?.id);
+  /*
+   * Only what still needs doing.
+   *
+   * A finished mission in the active list reads as something to start again,
+   * which is exactly wrong. Completed ones stay in history; this panel is the
+   * list of things outstanding.
+   */
+  const others = missions.filter(
+    (mission) =>
+      mission.id !== active?.id && mission.steps.some((step) => !step.done),
+  );
 
   const categories = useMemo(() => {
     const present = new Set(others.map((mission) => mission.category));
@@ -72,7 +82,8 @@ export function MissionPanel({ open, onClose, missions, onGoToPlace }: MissionPa
                 </div>
 
                 <span className="reward-chip">
-                  <Trophy size={13} strokeWidth={2.4} aria-hidden="true" />+{active.reward} points
+                  <Trophy size={13} strokeWidth={2.4} aria-hidden="true" />
+                  {total - done} to go
                 </span>
               </div>
             </div>
@@ -170,7 +181,9 @@ export function MissionPanel({ open, onClose, missions, onGoToPlace }: MissionPa
                       {mission.steps.length} steps · {mission.distanceKm} km away
                     </span>
                   </span>
-                  <span className="mission-card__reward">+{mission.reward}</span>
+                  <span className="mission-card__reward">
+                    {mission.steps.filter((step) => !step.done).length} left
+                  </span>
                 </button>
               );
             })

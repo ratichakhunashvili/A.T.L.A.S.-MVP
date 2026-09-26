@@ -10,8 +10,9 @@
   min-height: 46px;
   padding: 0 18px;
   border-radius: var(--r-md);
-  background: var(--green-900);
-  color: var(--ivory);
+  /* Primary buttons are the action blue, not the navy of the chrome. */
+  background: var(--color-action);
+  color: var(--color-white);
   font-size: var(--fs-14);
   font-weight: 700;
   letter-spacing: var(--tracking-tight);
@@ -35,7 +36,7 @@
 }
 
 .btn--accent {
-  background: var(--yellow);
+  background: var(--color-rating);
   color: var(--accent-ink);
 }
 
@@ -84,8 +85,8 @@
 }
 
 .chip[data-active="true"] {
-  background: var(--green-900);
-  color: var(--ivory);
+  background: var(--color-action);
+  color: var(--color-white);
   box-shadow: none;
 }
 
@@ -181,12 +182,13 @@
   height: 36px;
   border-radius: var(--r-sm);
   background: var(--green-900-05);
-  color: var(--green-700);
+  color: var(--color-action);
 }
 
+/* Unread carries the discovery lime, the system's "look at this" colour. */
 .notif[data-unread="true"] .notif__icon {
-  background: var(--yellow-18);
-  color: var(--accent-ink);
+  background: rgb(217 237 146 / 0.45);
+  color: var(--cat-culture-ink);
 }
 
 .notif__body {
@@ -233,7 +235,8 @@
   width: 7px;
   height: 7px;
   border-radius: 50%;
-  background: var(--yellow);
+  background: var(--color-highlight);
+  box-shadow: 0 0 0 1px var(--hairline-strong);
 }
 
 /* ========================================================================
@@ -254,8 +257,8 @@
   width: 34px;
   height: 34px;
   border-radius: 50%;
-  background: var(--green-900);
-  color: var(--yellow);
+  background: var(--color-primary);
+  color: var(--color-highlight);
 }
 
 .chat__greeting {
@@ -306,8 +309,8 @@
 .msg[data-author="guest"] {
   align-self: flex-end;
   border-radius: var(--r-md) var(--r-md) 6px var(--r-md);
-  background: var(--green-900);
-  color: var(--ivory);
+  background: var(--color-action);
+  color: var(--color-white);
 }
 
 .chat__composer {
@@ -341,8 +344,8 @@
   width: 36px;
   height: 36px;
   border-radius: 50%;
-  background: var(--green-900);
-  color: var(--ivory);
+  background: var(--color-action);
+  color: var(--color-white);
   transition:
     transform var(--dur-press) var(--ease-out),
     opacity var(--dur-fast) var(--ease-out);
@@ -412,7 +415,8 @@
 .progress-fill {
   height: 100%;
   border-radius: var(--r-pill);
-  background: var(--yellow);
+  /* An in-progress mission is an action, not a reward. */
+  background: var(--color-action);
   transition: width var(--dur-slow) var(--ease-spring);
 }
 
@@ -423,7 +427,7 @@
   flex: none;
   padding: 7px 12px;
   border-radius: var(--r-pill);
-  background: var(--yellow);
+  background: var(--color-rating);
   color: var(--accent-ink);
   font-size: var(--fs-12);
   font-weight: 700;
@@ -464,14 +468,15 @@
 }
 
 .step[data-done="true"] .step__mark {
-  background: var(--green-900);
-  color: var(--ivory);
+  background: var(--color-success);
+  color: var(--color-white);
   box-shadow: none;
 }
 
+/* Next up is the discovery lime; done is the success green. */
 .step[data-next="true"] .step__mark {
-  background: var(--yellow);
-  color: var(--accent-ink);
+  background: var(--color-highlight);
+  color: var(--cat-culture-ink);
   box-shadow: none;
 }
 
@@ -534,8 +539,8 @@
   width: 38px;
   height: 38px;
   border-radius: var(--r-sm);
-  background: var(--green-700);
-  color: var(--ivory);
+  background: var(--color-action);
+  color: var(--color-white);
 }
 
 .mission-card__title {
@@ -555,7 +560,7 @@
   flex: none;
   font-size: var(--fs-11);
   font-weight: 700;
-  color: var(--green-700);
+  color: var(--color-action);
 }
 
 /* ========================================================================
@@ -576,12 +581,12 @@
   width: 56px;
   height: 56px;
   border-radius: 50%;
-  background: var(--green-900);
-  color: var(--ivory);
+  background: var(--color-primary);
+  color: var(--color-white);
   font-size: var(--fs-17);
   font-weight: 700;
   letter-spacing: 0.01em;
-  box-shadow: 0 0 0 2px var(--yellow);
+  box-shadow: 0 0 0 2px var(--color-highlight);
 }
 
 .profile-head__name {
@@ -622,7 +627,7 @@
 }
 
 .stat--accent .stat__value {
-  color: var(--green-700);
+  color: var(--color-action);
 }
 
 .stat__label {
@@ -665,7 +670,7 @@
   height: 32px;
   border-radius: var(--r-sm);
   background: var(--green-900-05);
-  color: var(--green-700);
+  color: var(--color-action);
 }
 
 .pref__label {
@@ -695,8 +700,8 @@
   height: 116px;
   margin-bottom: 14px;
   border-radius: var(--r-lg);
-  background: linear-gradient(142deg, var(--green-700) 0%, var(--green-900) 78%);
-  color: var(--ivory-34);
+  background: linear-gradient(142deg, var(--color-property) 0%, var(--color-primary) 78%);
+  color: rgb(255 255 255 / 0.34);
   overflow: hidden;
 }
 
@@ -704,7 +709,7 @@
   content: "";
   position: absolute;
   inset: 0;
-  background: radial-gradient(70% 90% at 78% 12%, rgb(255 215 90 / 0.2), transparent 62%);
+  background: radial-gradient(70% 90% at 78% 12%, rgb(217 237 146 / 0.26), transparent 62%);
 }
 
 .place-hero__badge {
@@ -716,8 +721,8 @@
   gap: 6px;
   padding: 5px 11px;
   border-radius: var(--r-pill);
-  background: var(--ivory);
-  color: var(--green-900);
+  background: var(--color-control);
+  color: var(--color-icon);
   font-size: var(--fs-10);
   font-weight: 700;
   letter-spacing: var(--tracking-eyebrow);
@@ -735,8 +740,8 @@
   gap: 5px;
   padding: 5px 10px;
   border-radius: var(--r-pill);
-  background: var(--yellow);
-  color: var(--accent-ink);
+  background: var(--color-highlight);
+  color: var(--cat-culture-ink);
   font-size: var(--fs-10);
   font-weight: 700;
 }
@@ -766,6 +771,12 @@
 
 .place-meta__item--accent {
   color: var(--accent-ink);
+}
+
+/* Ratings are the one place the system's yellow appears inside a panel. */
+.place-meta__item--rating svg {
+  color: var(--color-rating);
+  fill: var(--color-rating);
 }
 
 .place-body {
@@ -804,7 +815,7 @@
   font-weight: 700;
   letter-spacing: var(--tracking-eyebrow);
   text-transform: uppercase;
-  color: var(--green-700);
+  color: var(--color-action);
 }
 
 .qr__lede {
@@ -819,8 +830,8 @@
   aspect-ratio: 1;
   border-radius: var(--r-lg);
   background:
-    radial-gradient(80% 60% at 50% 40%, rgb(22 71 53 / 0.55), transparent 70%),
-    var(--green-900);
+    radial-gradient(80% 60% at 50% 40%, rgb(30 96 145 / 0.7), transparent 70%),
+    var(--color-primary);
   overflow: hidden;
 }
 
@@ -842,7 +853,7 @@
   position: absolute;
   width: 30px;
   height: 30px;
-  border: 2.5px solid var(--yellow);
+  border: 2.5px solid var(--color-highlight);
   border-radius: 4px;
 }
 
@@ -884,8 +895,8 @@
   right: 6%;
   height: 2px;
   border-radius: var(--r-pill);
-  background: linear-gradient(90deg, transparent, var(--yellow), transparent);
-  box-shadow: 0 0 14px 2px rgb(255 215 90 / 0.45);
+  background: linear-gradient(90deg, transparent, var(--color-highlight), transparent);
+  box-shadow: 0 0 14px 2px rgb(217 237 146 / 0.5);
   animation: qr-scan 2.6s var(--ease-out) infinite;
 }
 
@@ -919,7 +930,7 @@
 .qr__hint-text {
   font-size: var(--fs-11);
   font-weight: 600;
-  color: var(--ivory-70);
+  color: rgb(255 255 255 / 0.72);
 }
 
 .qr__footer {
@@ -937,5 +948,162 @@
 }
 
 .qr__status[data-tone="error"] {
-  color: #8c2f16;
+  color: var(--danger-ink);
+}
+
+/* ========================================================================
+ * Account
+ * ===================================================================== */
+
+.auth-form {
+  padding-top: 4px;
+}
+
+/* Wraps an input so a reveal button can sit inside its edge. */
+.field__control {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.field__control .input {
+  padding-right: 42px;
+}
+
+.field__optional {
+  font-weight: 500;
+  color: var(--text-faint);
+}
+
+.field__error {
+  margin-top: 5px;
+  font-size: var(--fs-11);
+  line-height: 1.35;
+  color: var(--danger-ink);
+}
+
+/* An invalid field says so at its edge, not only in the message below it. */
+.input[aria-invalid="true"] {
+  box-shadow: inset 0 0 0 1.5px var(--danger);
+  background: rgb(229 110 93 / 0.09);
+}
+
+/* Focused *and* invalid: one colour, not an emerald ring around a red box. */
+.input[aria-invalid="true"]:focus-visible {
+  outline-color: var(--danger);
+}
+
+.field__reveal {
+  position: absolute;
+  right: 6px;
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border-radius: var(--r-xs);
+  color: var(--text-muted);
+  transition:
+    background-color var(--dur-fast) var(--ease-out),
+    color var(--dur-fast) var(--ease-out);
+}
+
+.field__reveal:hover {
+  background: var(--green-900-05);
+  color: var(--text-strong);
+}
+
+.auth-form__error {
+  margin: 2px 0 12px;
+  padding: 10px 12px;
+  border-radius: var(--r-sm);
+  background: rgb(229 110 93 / 0.14);
+  color: var(--danger-ink);
+  font-size: var(--fs-12);
+  line-height: 1.4;
+}
+
+.auth-form__switch {
+  margin-top: 12px;
+  text-align: center;
+  font-size: var(--fs-12);
+  color: var(--text-muted);
+}
+
+.link {
+  color: var(--color-action);
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.link:hover {
+  color: var(--color-primary);
+}
+
+.auth-form__guest {
+  display: grid;
+  gap: 10px;
+  margin-top: 18px;
+}
+
+/* ---- Signed-out state inside the profile sheet -------------------------- */
+
+.account-card {
+  display: grid;
+  justify-items: center;
+  gap: 4px;
+  padding: 18px 16px 16px;
+  border-radius: var(--r-lg);
+  background: var(--color-primary);
+  color: var(--color-white);
+  text-align: center;
+}
+
+.account-card__icon {
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  margin-bottom: 6px;
+  border-radius: 50%;
+  background: rgb(255 255 255 / 0.14);
+  color: var(--color-highlight);
+}
+
+.account-card__title {
+  font-size: var(--fs-15);
+  font-weight: 700;
+  letter-spacing: var(--tracking-tight);
+}
+
+.account-card__text {
+  max-width: 30ch;
+  font-size: var(--fs-12);
+  line-height: 1.45;
+  color: var(--ivory-70);
+}
+
+.account-card__actions {
+  display: flex;
+  gap: 8px;
+  width: 100%;
+  margin-top: 12px;
+}
+
+.account-card__actions .btn {
+  flex: 1;
+}
+
+.account-card .btn--ghost {
+  box-shadow: inset 0 0 0 1px var(--ivory-34);
+  color: var(--ivory);
+}
+
+.account-card .btn--ghost:hover {
+  background: var(--ivory-08);
+}
+
+.account-email {
+  font-size: var(--fs-12);
+  color: var(--text-muted);
 }

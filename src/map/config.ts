@@ -4,10 +4,12 @@
  * Mapbox Standard exposes ~47 configuration properties — a full colour system,
  * a road hierarchy, label controls, and switches for its 3D content. This file
  * uses them to art-direct the map into the product's palette instead of
- * dropping a stock night style behind the UI.
+ * dropping a stock style behind the UI.
  *
- * Everything resolves to the same four brand colours the interface uses:
- *   ivory #F5F1E7 · green-900 #12231B · green-700 #164735 · yellow #FFD75A
+ * The direction is a bright daytime travel map: warm neutral ground, clear
+ * blue water, mint parks, sand-toned buildings, and a road hierarchy that runs
+ * warm. Accents are spent sparingly — the map should read as somewhere you
+ * would want to walk around, not as a dashboard or a game.
  */
 
 export const MAPBOX_TOKEN = import.meta.env.VITE_MAPBOX_TOKEN ?? "";
@@ -19,34 +21,39 @@ export const MAPBOX_STYLE = import.meta.env.VITE_MAPBOX_STYLE ?? "mapbox://style
 /* ------------------------------------------------------------------------ */
 
 /**
- * Ground plane and water.
+ * The map palette, from the product's colour system.
  *
- * Land is a deep green-charcoal — the same family as `--green-900`, dark
- * enough that ivory chrome always has contrast against it. Water is pushed
- * cold and a touch lighter so the river reads as a shape rather than a hole,
- * which matters in Tbilisi where the Mtkvari is the city's main landmark.
+ * Land carries tonal variation rather than one flat fill, water is bright and
+ * clean without going neon, and green space is applied with restraint. The
+ * whole basemap is warm and light, so the navy chrome and the coloured markers
+ * on top of it are the only saturated things on screen.
  */
-const LAND = "hsl(158, 16%, 12%)";
-const WATER = "hsl(197, 40%, 21%)";
-const GREENSPACE = "hsl(146, 22%, 15%)";
-const BUILDINGS = "hsl(158, 10%, 30%)";
+const LAND = "#F3EEDB";
+const WATER = "#83DCEC";
+/*
+ * Parks use the palette's green rather than its teal park tones: Standard has
+ * one greenspace colour, and the teals sit in the water's hue family, so a
+ * teal park makes every square in the city read as a pond. Mirrored by
+ * --map-green in tokens.css; change both together.
+ */
+const GREENSPACE = "#76C893";
+const BUILDINGS = "#F2F0E8";
 
 /**
- * Road hierarchy, warm to cool.
+ * Road hierarchy.
  *
- * Roads are the one place the map is allowed to be warm: motorways read as lit
- * arteries, trunks a step down, everything else recedes into a cool grey-green.
- * `roadsBrightness` is raised well above the 0.4 default because at night the
- * whole network otherwise sinks into the land and the hierarchy disappears.
+ * Minor roads are the near-white road surface and recede into the land;
+ * motorways carry the warmer underlay tone so the arterial structure still
+ * reads first. Nothing on the road network is allowed to shout.
  */
-const MOTORWAY = "hsl(40, 60%, 56%)";
-const TRUNK = "hsl(36, 38%, 42%)";
-const ROAD = "hsl(165, 9%, 32%)";
+const MOTORWAY = "#EFE3C2";
+const TRUNK = "#F7EEDA";
+const ROAD = "#FFFDF4";
 
-/** Label ink, in the ivory family so type on the map matches type in the UI. */
-const LABEL_PLACE = "hsl(40, 26%, 87%)";
-const LABEL_ROAD = "hsl(40, 20%, 72%)";
-const LABEL_POI = "hsl(158, 8%, 56%)";
+/** Map typography, from the system's map-label and muted tokens. */
+const LABEL_PLACE = "#506A67";
+const LABEL_ROAD = "#758784";
+const LABEL_POI = "#506A67";
 
 /**
  * Static basemap configuration.
@@ -60,7 +67,7 @@ const LABEL_POI = "hsl(158, 8%, 56%)";
  * family risks losing those glyphs, which costs more than it gains.
  */
 export const BASEMAP_CONFIG: Record<string, string | number | boolean> = {
-  lightPreset: "night",
+  lightPreset: "day",
   theme: "default",
 
   colorLand: LAND,
@@ -68,29 +75,32 @@ export const BASEMAP_CONFIG: Record<string, string | number | boolean> = {
   colorGreenspace: GREENSPACE,
   colorBuildings: BUILDINGS,
 
-  // Land-use tints ship as pale pastels for the day preset. Left alone they
-  // bloom into blotches at night, so each is pulled into the dark green family.
-  colorCommercial: "hsl(30, 12%, 16%)",
-  colorMedical: "hsl(0, 10%, 16%)",
-  colorEducation: "hsl(40, 12%, 16%)",
-  colorIndustrial: "hsl(220, 8%, 16%)",
+  // Land use draws on the land range only, so districts vary in tone without
+  // the map turning into a choropleth.
+  colorCommercial: "#FFFAEA",
+  colorMedical: "#F6EFE0",
+  colorEducation: "#FFFAEA",
+  colorIndustrial: "#F1EBD8",
 
   colorMotorways: MOTORWAY,
   colorTrunks: TRUNK,
   colorRoads: ROAD,
-  roadsBrightness: 0.82,
+  // Daylight wants the network crisp; a night build has to fight to be seen.
+  roadsBrightness: 1,
   showPedestrianRoads: true,
 
   colorPlaceLabels: LABEL_PLACE,
   colorRoadLabels: LABEL_ROAD,
   colorPointOfInterestLabels: LABEL_POI,
-  colorAdminBoundaries: "hsl(158, 14%, 30%)",
   showAdminBoundaries: false,
 
-  // POI labels stay, but flat and sparse: no circular backgrounds, one colour,
-  // lowest density. They give the city life without arguing with our markers.
+  // POIs keep their circular chip — that is what makes the city feel
+  // inhabited rather than blank — but in one ink rather than Mapbox's own
+  // category palette, which puts magenta and lavender on a map that has a
+  // colour system of its own. The ones that would collide with our markers
+  // are hidden individually by `BasemapAnnotations`.
   showPointOfInterestLabels: true,
-  backgroundPointOfInterestLabels: "none",
+  backgroundPointOfInterestLabels: "circle",
   colorModePointOfInterestLabels: "single",
   showTransitLabels: false,
 
@@ -103,9 +113,10 @@ export const BASEMAP_CONFIG: Record<string, string | number | boolean> = {
   // show. One or the other, not both.
   showLandmarkIcons: false,
 
-  // The hotel building is tinted through the `buildings` featureset.
-  colorBuildingHighlight: "hsl(44, 60%, 52%)",
-  colorBuildingSelect: "hsl(44, 60%, 52%)",
+  // The guest's own building, tinted through the `buildings` featureset, in
+  // the system's property blue — the same colour as the hotel marker above it.
+  colorBuildingHighlight: "#1E6091",
+  colorBuildingSelect: "#1E6091",
 };
 
 /**
@@ -113,11 +124,11 @@ export const BASEMAP_CONFIG: Record<string, string | number | boolean> = {
  *
  * A wide view wants to read as geography, a close view as a street you could
  * walk down. Rather than choosing once, labels arrive as the guest comes in:
- * road names at street zoom, a few POIs closer still.
+ * road names at street zoom, more POIs closer still.
  */
 export const LABEL_ZOOM_RULES = [
-  { maxZoom: 14.2, showRoadLabels: false, densityPointOfInterestLabels: 0 },
-  { maxZoom: 15.8, showRoadLabels: false, densityPointOfInterestLabels: 1 },
+  { maxZoom: 13.6, showRoadLabels: false, densityPointOfInterestLabels: 0 },
+  { maxZoom: 15.4, showRoadLabels: false, densityPointOfInterestLabels: 1 },
   { maxZoom: Infinity, showRoadLabels: true, densityPointOfInterestLabels: 2 },
 ] as const;
 
@@ -150,7 +161,7 @@ export function supportsHeavyBasemap(): boolean {
  * sits in a valley between two ridges, so losing all relief at city zoom throws
  * away the thing that makes the place legible.
  *
- * This curve keeps the ridges dramatic in the wide view, holds a trace of slope
+ * This curve keeps the ridges readable in the wide view, holds a trace of slope
  * through street zoom so the old town still reads as built on a hill, and
  * releases to flat before buildings get close enough to tear.
  */
@@ -169,13 +180,13 @@ export const TERRAIN = {
     6,
     0,
     8.5,
-    1.35,
+    1.3,
     12,
-    1.2,
+    1.15,
     14.5,
-    0.7,
+    0.65,
     16.5,
-    0.22,
+    0.2,
     17.6,
     0,
   ],
@@ -186,47 +197,46 @@ export const TERRAIN = {
 /* ------------------------------------------------------------------------ */
 
 /**
- * Night atmosphere.
+ * Daytime atmosphere.
  *
- * The far edge of the city dissolves into the same deep green the UI sits on,
- * which is what ties the map to the interface at the horizon instead of at the
- * bezel. Stars are barely on — at a 56° pitch there is little sky, and the
- * point is a trace of depth, not a planetarium.
+ * A pale haze at the far edge and a clear sky above it. The point is aerial
+ * perspective — distant city reading as further away — not weather.
  */
-export const NIGHT_FOG = {
-  range: [1.4, 11] as [number, number],
-  color: "hsl(160, 24%, 9%)",
-  "high-color": "hsl(198, 36%, 15%)",
-  "space-color": "hsl(200, 42%, 4%)",
-  "horizon-blend": 0.045,
-  "star-intensity": 0.1,
-  "vertical-range": [20, 190] as [number, number],
+export const DAY_FOG = {
+  range: [1.6, 14] as [number, number],
+  color: "#DDEFF2",
+  "high-color": "#B8EEF2",
+  "space-color": "#83DCEC",
+  "horizon-blend": 0.05,
+  "star-intensity": 0,
+  "vertical-range": [20, 220] as [number, number],
 };
 
 /**
  * Lighting.
  *
- * Standard's night ambient is a flat blue. Shifting it green seats the whole
- * scene in the brand without touching a single colour value, and a low warm
- * directional from the south-west gives buildings a lit face and a long shadow
- * — which is also what makes an uploaded 3D model look like it is standing in
- * the city rather than pasted over it.
+ * Kept close to neutral daylight with a touch of warmth. A night build can
+ * afford a coloured ambient; in daylight a tinted ambient reads as a colour
+ * cast over everything, so the brand lives in the surfaces instead. The
+ * directional is what gives buildings a lit face, a soft shadow, and the sense
+ * that an uploaded 3D model is standing in the city rather than on top of it.
  */
-export const NIGHT_LIGHTS = [
+export const DAY_LIGHTS = [
   {
     id: "ambient",
     type: "ambient" as const,
-    properties: { color: "hsl(165, 30%, 18%)", intensity: 0.75 },
+    properties: { color: "hsl(44, 34%, 97%)", intensity: 0.78 },
   },
   {
     id: "directional",
     type: "directional" as const,
     properties: {
-      color: "hsl(40, 52%, 76%)",
-      intensity: 0.42,
-      direction: [205, 30] as [number, number],
+      color: "hsl(44, 46%, 98%)",
+      intensity: 0.58,
+      direction: [205, 42] as [number, number],
       "cast-shadows": true,
-      "shadow-intensity": 0.7,
+      // Daylight shadows are soft; a night-strength shadow here reads as grime.
+      "shadow-intensity": 0.32,
     },
   },
 ];
@@ -235,22 +245,22 @@ export const NIGHT_LIGHTS = [
 /* Camera                                                                    */
 /* ------------------------------------------------------------------------ */
 
-/** Camera limits. Pitch stops short of the horizon — tilted, never vertiginous. */
+/** Camera limits. Pitch stops well short of the horizon. */
 export const CAMERA_LIMITS = {
   minZoom: 9,
   maxZoom: 19.5,
-  maxPitch: 72,
+  maxPitch: 68,
 };
 
 /**
- * The opening move: the map starts high and wide, then settles into the
+ * The opening move: the map starts higher and wider, then settles into the
  * exploration view over about three seconds. It reads as arriving somewhere.
  * Any touch cancels it, and it is skipped entirely under reduced motion.
  */
 export const INTRO = {
   zoomOffset: -2.1,
-  pitchOffset: -26,
-  bearingOffset: 34,
+  pitchOffset: -24,
+  bearingOffset: 30,
   duration: 3000,
 };
 

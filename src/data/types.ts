@@ -117,6 +117,16 @@ export interface MapModel {
   createdAt: string;
   updatedAt: string;
 
+  /**
+   * Basemap buildings to take out from under this model.
+   *
+   * Stored as coordinates rather than feature ids: an id is only stable
+   * within a tileset version, and a mask that silently stops working after a
+   * basemap update is a bug nobody would go looking for. `BuildingMask`
+   * re-resolves these to features every time the style loads.
+   */
+  hiddenBuildings?: { longitude: number; latitude: number }[];
+
   /* -- Extensibility (unused by the renderer, safe to populate later) ----- */
   images?: string[];
   videoUrl?: string;
@@ -151,8 +161,6 @@ export interface Mission {
   subtitle: string;
   category: PlaceCategory;
   steps: MissionStep[];
-  /** Points awarded on completion. */
-  reward: number;
   /** Straight-line distance from the hotel, in kilometres. */
   distanceKm: number;
   /** Set on the single mission the guest is currently running. */
@@ -171,11 +179,17 @@ export interface NotificationItem {
   unread: boolean;
 }
 
+/**
+ * The guest's own summary.
+ *
+ * There is deliberately no score here. Progress is expressed as achievements
+ * collected and days completed — a number that only goes up is a scoreboard,
+ * and this product is not one.
+ */
 export interface GuestProfile {
   name: string;
   initials: string;
   memberSince: string;
-  points: number;
   completedMissions: number;
   savedPlaces: number;
   reviews: number;

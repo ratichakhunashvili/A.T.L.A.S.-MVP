@@ -1,0 +1,650 @@
+/*
+ * The daily plan.
+ *
+ * Built from the same tokens as every other panel. The only new idea is the
+ * hero — the next task gets real visual weight, because "what do I do now" is
+ * the question the product exists to answer, and everything below it is a
+ * timeline that stays deliberately quiet.
+ */
+
+.day__progress {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  margin-bottom: 16px;
+}
+
+.day__section {
+  margin: 20px 0 10px;
+}
+
+.day__spin {
+  animation: day-spin 900ms linear infinite;
+  color: var(--color-action);
+}
+
+@keyframes day-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ---- The next task ------------------------------------------------------ */
+
+.day__hero {
+  display: flex;
+  flex-direction: column;
+  gap: 11px;
+  padding: 16px;
+  border-radius: var(--r-lg);
+  background: var(--color-primary);
+  color: var(--color-white);
+  box-shadow: var(--shadow-md);
+}
+
+.day__hero .eyebrow {
+  color: var(--color-highlight);
+}
+
+.day__hero-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.day__hero-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  width: 42px;
+  height: 42px;
+  border-radius: var(--r-sm);
+  background: rgb(255 255 255 / 0.14);
+  color: var(--color-white);
+}
+
+.day__hero-text {
+  min-width: 0;
+}
+
+.day__hero-title {
+  margin: 2px 0 0;
+  font-size: var(--fs-20);
+  font-weight: 800;
+  line-height: 1.16;
+  letter-spacing: var(--tracking-tighter);
+}
+
+.day__hero-sub {
+  margin: 0;
+  font-size: var(--fs-14);
+  color: var(--text-on-dark-muted);
+}
+
+.day__hero-reason {
+  margin: 0;
+  font-size: var(--fs-14);
+  line-height: 1.4;
+  color: var(--text-on-dark-muted);
+}
+
+.day__hero-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.day__chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 10px;
+  border-radius: var(--r-pill);
+  background: rgb(255 255 255 / 0.12);
+  font-size: var(--fs-11);
+  font-weight: 700;
+  color: var(--color-white);
+}
+
+/* The one place the partner relationship is stated in the plan itself. */
+.day__chip[data-tone="partner"] {
+  background: var(--color-property);
+}
+
+.day__chip[data-tone="hotel"] {
+  background: rgb(217 237 146 / 0.22);
+  color: var(--color-highlight);
+}
+
+.day__chip[data-tone="wild"] {
+  background: var(--color-highlight);
+  color: var(--cat-culture-ink);
+}
+
+.day__hero-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 2px;
+}
+
+.day__hero-actions .btn--block {
+  flex: 1;
+}
+
+/* The hero's buttons sit on navy, so the ghost variant has to invert. */
+.day__hero-actions .btn--ghost {
+  flex: none;
+  width: 44px;
+  padding: 0;
+  justify-content: center;
+  border-color: rgb(255 255 255 / 0.26);
+  background: transparent;
+  color: var(--color-white);
+}
+
+.day__hero-actions .btn--ghost:hover {
+  background: rgb(255 255 255 / 0.1);
+}
+
+.day__hero--done {
+  align-items: center;
+  text-align: center;
+  background: var(--color-success);
+  animation: day-pop var(--dur-panel) var(--ease-spring) both;
+}
+
+@keyframes day-pop {
+  from {
+    transform: scale(0.96);
+    opacity: 0;
+  }
+}
+
+.day__hero-tick {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: rgb(255 255 255 / 0.18);
+}
+
+/* ---- Timeline ----------------------------------------------------------- */
+
+.day__timeline,
+.day__events {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.day__row,
+.day__event {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 10px 4px;
+  border-radius: var(--r-sm);
+  transition: background var(--dur-fast) var(--ease-out);
+}
+
+.day__row[data-current="true"] {
+  background: var(--green-900-05);
+}
+
+.day__time {
+  flex: none;
+  width: 42px;
+  font-size: var(--fs-13);
+  font-weight: 800;
+  color: var(--color-action);
+  font-variant-numeric: tabular-nums;
+}
+
+.day__mark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: var(--green-900-05);
+  color: var(--color-icon);
+}
+
+.day__mark[data-done="true"] {
+  background: var(--color-success);
+  color: var(--color-white);
+}
+
+.day__mark--commitment {
+  background: transparent;
+  box-shadow: inset 0 0 0 1.5px var(--hairline-strong);
+  color: var(--text-muted);
+}
+
+.day__body {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  flex: 1;
+  min-width: 0;
+  text-align: left;
+}
+
+.day__body--button {
+  border: none;
+  background: none;
+  padding: 0;
+  cursor: pointer;
+  font: inherit;
+  color: inherit;
+}
+
+.day__title {
+  font-size: var(--fs-14);
+  font-weight: 700;
+  letter-spacing: var(--tracking-tight);
+  color: var(--text-strong);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.day__meta {
+  font-size: var(--fs-12);
+  color: var(--text-muted);
+}
+
+.day__chevron {
+  flex: none;
+  color: var(--text-faint);
+}
+
+/* Done and dropped both recede, but differently: finished is satisfying,
+   skipped is simply out of the way. */
+.day__row[data-done="true"] .day__title {
+  color: var(--text-muted);
+  text-decoration: line-through;
+  text-decoration-color: var(--hairline-strong);
+}
+
+.day__row[data-dropped="true"] {
+  opacity: 0.55;
+}
+
+.day__row--commitment .day__title {
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+.day__note {
+  margin: 14px 0 0;
+  padding: 11px 13px;
+  border-radius: var(--r-sm);
+  background: var(--green-900-05);
+  font-size: var(--fs-12);
+  line-height: 1.45;
+  color: var(--text-muted);
+}
+
+.day__event {
+  padding: 9px 4px;
+}
+
+/* ---- Task sheet --------------------------------------------------------- */
+
+.task__reason {
+  display: flex;
+  align-items: flex-start;
+  gap: 7px;
+  margin: 0;
+  padding: 11px 13px;
+  border-radius: var(--r-sm);
+  background: var(--green-900-05);
+  font-size: var(--fs-13);
+  line-height: 1.45;
+  color: var(--text);
+}
+
+.task__reason svg {
+  flex: none;
+  margin-top: 2px;
+  color: var(--color-action);
+}
+
+.task__notice {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin: 0;
+  padding: 10px 13px;
+  border-radius: var(--r-sm);
+  background: rgb(255 210 61 / 0.18);
+  font-size: var(--fs-12);
+  font-weight: 600;
+  color: var(--accent-ink);
+}
+
+.task__done {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 15px;
+  border-radius: var(--r-md);
+  background: var(--color-success);
+  color: var(--color-white);
+  font-size: var(--fs-15);
+  font-weight: 700;
+  animation: day-pop var(--dur-panel) var(--ease-spring) both;
+}
+
+.task__links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+/* ---- Task markers ------------------------------------------------------- */
+
+/*
+ * A planned task is visually distinct from a browsable place: it carries its
+ * order in the day, so the map reads as a route rather than as a scatter of
+ * pins.
+ */
+.task-marker {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  border: none;
+  background: none;
+  padding: 6px;
+  margin: -6px;
+  cursor: pointer;
+}
+
+.task-marker__pin {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 2.5px solid var(--color-control);
+  background: var(--color-action);
+  color: var(--color-white);
+  font-size: var(--fs-13);
+  font-weight: 800;
+  box-shadow: var(--shadow-float);
+  transition:
+    transform var(--dur-fast) var(--ease-spring),
+    background var(--dur-fast) var(--ease-out);
+}
+
+.task-marker[data-property="true"] .task-marker__pin {
+  background: var(--color-primary);
+}
+
+.task-marker[data-state="COMPLETED"] .task-marker__pin,
+.task-marker[data-state="VERIFIED"] .task-marker__pin {
+  background: var(--color-success);
+}
+
+.task-marker[data-state="SKIPPED"] .task-marker__pin,
+.task-marker[data-state="MISSED"] .task-marker__pin,
+.task-marker[data-state="EXPIRED"] .task-marker__pin {
+  background: var(--color-nav-muted);
+}
+
+.task-marker[data-wildcard="true"] .task-marker__pin {
+  background: var(--color-highlight);
+  color: var(--cat-culture-ink);
+}
+
+.task-marker[data-selected="true"] .task-marker__pin {
+  transform: scale(1.14);
+  box-shadow: var(--shadow-float), 0 0 0 4px rgb(24 78 119 / 0.22);
+}
+
+.task-marker:active .task-marker__pin {
+  transform: scale(0.94);
+}
+
+.task-marker__label {
+  max-width: 132px;
+  padding: 3px 8px;
+  border-radius: var(--r-pill);
+  background: var(--color-control);
+  box-shadow: var(--ring-hairline), var(--shadow-sm);
+  font-size: var(--fs-11);
+  font-weight: 700;
+  color: var(--color-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* The order line joining the day's stops. */
+.task-route {
+  pointer-events: none;
+}
+
+/* ---- Daily reward ------------------------------------------------------- */
+
+/*
+ * One thing the hotel is offering for finishing the day.
+ *
+ * Locked it is quiet and factual — a line of text and a count. Unlocked it
+ * becomes the success green and gains a button, which is the only moment the
+ * panel raises its voice.
+ */
+.day__reward {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 16px;
+  padding: 13px 14px;
+  border-radius: var(--r-md);
+  background: var(--color-control);
+  box-shadow: var(--ring-hairline);
+  transition:
+    background var(--dur-panel) var(--ease-out),
+    box-shadow var(--dur-panel) var(--ease-out);
+}
+
+.day__reward-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--r-sm);
+  background: var(--green-900-05);
+  color: var(--text-muted);
+}
+
+.day__reward-text {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  flex: 1;
+  min-width: 0;
+}
+
+.day__reward-label {
+  font-size: var(--fs-10);
+  font-weight: 700;
+  letter-spacing: var(--tracking-eyebrow);
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.day__reward-title {
+  font-size: var(--fs-15);
+  font-weight: 700;
+  letter-spacing: var(--tracking-tight);
+  color: var(--text-strong);
+}
+
+.day__reward-where {
+  font-size: var(--fs-12);
+  color: var(--text-muted);
+}
+
+.day__reward[data-unlocked="true"] {
+  background: var(--color-success);
+  box-shadow: var(--shadow-sm);
+}
+
+.day__reward[data-unlocked="true"] .day__reward-icon {
+  background: rgb(255 255 255 / 0.18);
+  color: var(--color-white);
+}
+
+.day__reward[data-unlocked="true"] .day__reward-label {
+  color: var(--color-highlight);
+}
+
+.day__reward[data-unlocked="true"] .day__reward-title,
+.day__reward[data-unlocked="true"] .day__reward-where {
+  color: var(--color-white);
+}
+
+.day__reward[data-unlocked="true"] .btn {
+  background: var(--color-control);
+  color: var(--color-success);
+}
+
+.day__reward[data-claimed="true"] {
+  opacity: 0.72;
+}
+
+/* ---- Preferences editor ------------------------------------------------- */
+
+.prefs {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.prefs__label {
+  margin-top: 8px;
+}
+
+.prefs__hint {
+  margin: 0;
+  font-size: var(--fs-12);
+  color: var(--text-muted);
+}
+
+.prefs__range {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+/* The discovery switch. Stated plainly rather than hidden in a slider. */
+.prefs__surprise {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  width: 100%;
+  margin-top: 4px;
+  padding: 12px 13px;
+  border: 1.5px solid var(--hairline);
+  border-radius: var(--r-md);
+  background: var(--color-control);
+  text-align: left;
+  cursor: pointer;
+  color: var(--text-strong);
+  transition:
+    border-color var(--dur-fast) var(--ease-out),
+    background var(--dur-fast) var(--ease-out);
+}
+
+.prefs__surprise[data-active="true"] {
+  border-color: var(--color-action);
+  background: rgb(24 78 119 / 0.06);
+}
+
+.prefs__surprise svg {
+  flex: none;
+  color: var(--color-action);
+}
+
+.prefs__surprise span {
+  flex: 1;
+  min-width: 0;
+}
+
+.prefs__surprise strong {
+  display: block;
+  font-size: var(--fs-14);
+  font-weight: 700;
+  letter-spacing: var(--tracking-tight);
+}
+
+.prefs__surprise em {
+  display: block;
+  font-size: var(--fs-12);
+  font-style: normal;
+  color: var(--text-muted);
+}
+
+.prefs__switch {
+  flex: none;
+  width: 36px;
+  height: 21px;
+  border-radius: var(--r-pill);
+  background: var(--hairline-strong);
+  position: relative;
+  transition: background var(--dur-fast) var(--ease-out);
+}
+
+.prefs__switch::after {
+  content: "";
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  background: var(--color-control);
+  box-shadow: var(--shadow-sm);
+  transition: transform var(--dur-fast) var(--ease-spring);
+}
+
+.prefs__switch[data-on="true"] {
+  background: var(--color-action);
+}
+
+.prefs__switch[data-on="true"]::after {
+  transform: translateX(15px);
+}
+
+.prefs__regen {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  margin-top: 14px;
+  padding: 13px;
+  border-radius: var(--r-md);
+  background: var(--green-900-05);
+}
+
+.prefs__regen-text {
+  margin: 0;
+  font-size: var(--fs-12);
+  line-height: 1.45;
+  color: var(--text-muted);
+}

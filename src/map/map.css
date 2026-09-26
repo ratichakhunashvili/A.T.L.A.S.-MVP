@@ -8,7 +8,7 @@
   /* dvh tracks the collapsing iOS URL bar; vh above is the fallback. */
   height: 100dvh;
   z-index: var(--z-map);
-  background: var(--ink);
+  background: var(--map-backdrop);
   overflow: hidden;
 }
 
@@ -38,26 +38,25 @@
   inset: 0;
   z-index: 1;
   pointer-events: none;
-  /* Lighter than it looks it should be: the basemap is already graded, so the
-     vignette only has to guarantee contrast behind the floating chrome. */
+  /*
+   * On a bright basemap the heavy vignette a night map needs would read as
+   * dirt on the lens. All that is left is a whisper at the top and bottom
+   * edges to seat the floating chrome; the surfaces themselves carry their
+   * own hairline and shadow.
+   */
   background:
-    radial-gradient(
-      128% 86% at 50% 46%,
-      transparent 46%,
-      rgb(7 16 12 / 0.16) 80%,
-      rgb(7 16 12 / 0.38) 100%
-    ),
-    linear-gradient(180deg, rgb(11 21 18 / 0.38) 0%, transparent 22%),
-    linear-gradient(0deg, rgb(11 21 18 / 0.42) 0%, transparent 26%);
+    linear-gradient(180deg, rgb(23 35 29 / 0.13) 0%, transparent 17%),
+    linear-gradient(0deg, rgb(23 35 29 / 0.14) 0%, transparent 20%);
 }
 
 .map-grade::after {
   content: "";
   position: absolute;
   inset: 0;
-  background: var(--green-700);
+  /* A trace of warmth, so the basemap sits in the same light as the ivory. */
+  background: var(--sand);
   opacity: 0.05;
-  mix-blend-mode: soft-light;
+  mix-blend-mode: multiply;
 }
 
 /* ---- Mapbox's own chrome ------------------------------------------------ */
@@ -83,7 +82,7 @@
 }
 
 .mapboxgl-ctrl-logo {
-  opacity: 0.4;
+  opacity: 0.55;
   transform: scale(0.76);
   transform-origin: bottom left;
   transition: opacity var(--dur-fast) var(--ease-out);
@@ -94,7 +93,7 @@
 }
 
 .mapboxgl-ctrl-attrib.mapboxgl-compact {
-  background: rgb(11 21 18 / 0.5);
+  background: rgb(255 253 243 / 0.78);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
   border-radius: var(--r-pill);
@@ -102,19 +101,19 @@
 }
 
 .mapboxgl-ctrl-attrib-button {
-  background-color: var(--ivory-52) !important;
+  background-color: rgb(23 35 29 / 0.45) !important;
   opacity: 0.7;
   transform: scale(0.8);
 }
 
 .mapboxgl-ctrl-attrib.mapboxgl-compact-show {
-  background: rgb(11 21 18 / 0.88);
+  background: rgb(255 253 243 / 0.95);
   padding: 3px 26px 3px 10px;
 }
 
 .mapboxgl-ctrl-attrib a,
 .mapboxgl-ctrl-attrib {
-  color: var(--ivory-52);
+  color: var(--text-muted);
   font-family: var(--font-sans);
   font-size: var(--fs-10);
 }

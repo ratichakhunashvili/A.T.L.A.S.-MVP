@@ -6,7 +6,7 @@
   place-items: center;
   padding: max(var(--gutter), var(--safe-left));
   background:
-    radial-gradient(90% 60% at 50% 30%, rgb(22 71 53 / 0.55), transparent 70%),
+    radial-gradient(90% 60% at 50% 30%, rgb(30 96 145 / 0.6), transparent 70%),
     var(--ink);
 }
 
@@ -27,8 +27,8 @@
   height: 40px;
   margin-bottom: 14px;
   border-radius: var(--r-sm);
-  background: var(--yellow-18);
-  color: var(--accent-ink);
+  background: rgb(217 237 146 / 0.4);
+  color: var(--cat-culture-ink);
 }
 
 .notice__title {
@@ -47,8 +47,8 @@
   margin-top: 14px;
   padding: 12px 14px;
   border-radius: var(--r-sm);
-  background: var(--green-900);
-  color: var(--ivory-70);
+  background: var(--color-primary);
+  color: rgb(255 255 255 / 0.75);
   font-family: ui-monospace, "SF Mono", "Cascadia Code", Menlo, monospace;
   font-size: var(--fs-11);
   line-height: 1.6;
@@ -60,4 +60,96 @@
   margin-top: 10px;
   font-size: var(--fs-11);
   color: var(--text-faint);
+}
+
+/* ---- Location debug (development only) ---------------------------------- */
+/*
+ * Ships nowhere: the component that renders these is behind
+ * `import.meta.env.DEV` and is dropped from production builds.
+ */
+
+.locdbg__toggle {
+  position: fixed;
+  left: max(var(--gutter), var(--safe-left));
+  bottom: calc(var(--nav-occupied) + 14px);
+  z-index: var(--z-map-ui);
+  padding: 6px 10px;
+  border-radius: var(--r-sm);
+  background: var(--color-primary);
+  color: var(--color-white);
+  font-size: var(--fs-10);
+  font-weight: 800;
+  letter-spacing: var(--tracking-eyebrow);
+}
+
+.locdbg {
+  position: fixed;
+  left: max(var(--gutter), var(--safe-left));
+  bottom: calc(var(--nav-occupied) + 14px);
+  z-index: var(--z-modal);
+  width: min(330px, calc(100vw - 2 * var(--gutter)));
+  padding: 12px 13px;
+  border-radius: var(--r-md);
+  background: rgb(0 53 94 / 0.96);
+  color: var(--color-white);
+  font-size: var(--fs-11);
+  line-height: 1.5;
+  box-shadow: var(--shadow-lg);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.locdbg__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.locdbg__title {
+  font-weight: 800;
+  letter-spacing: var(--tracking-eyebrow);
+  text-transform: uppercase;
+  font-size: var(--fs-10);
+  color: var(--color-highlight);
+}
+
+.locdbg__close {
+  width: 22px;
+  height: 22px;
+  border-radius: var(--r-xs);
+  color: var(--ivory-70);
+  font-size: 16px;
+  line-height: 1;
+}
+
+.locdbg__rule {
+  height: 1px;
+  margin: 8px 0;
+  background: var(--ivory-16);
+}
+
+.locdbg__row {
+  display: flex;
+  gap: 10px;
+  justify-content: space-between;
+}
+
+.locdbg__label {
+  flex: none;
+  color: var(--ivory-52);
+}
+
+.locdbg__value {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  word-break: break-word;
+}
+
+.locdbg__value[data-tone="warn"] {
+  color: var(--color-highlight);
+}
+
+.locdbg__value[data-tone="bad"] {
+  color: var(--color-warning);
 }

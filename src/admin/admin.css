@@ -101,8 +101,8 @@
   display: grid;
   place-items: center;
   height: 110px;
-  background: linear-gradient(140deg, var(--green-700), var(--green-900));
-  color: var(--ivory-34);
+  background: linear-gradient(140deg, var(--color-property), var(--color-primary));
+  color: rgb(255 255 255 / 0.34);
 }
 
 .model-card__status {
@@ -115,18 +115,19 @@
   font-weight: 700;
   letter-spacing: var(--tracking-eyebrow);
   text-transform: uppercase;
-  background: var(--ivory);
-  color: var(--green-900);
+  background: var(--color-control);
+  color: var(--color-icon);
 }
 
+/* Live on the guest map is the success green. */
 .model-card__status[data-status="published"] {
-  background: var(--yellow);
-  color: var(--accent-ink);
+  background: var(--color-success);
+  color: var(--color-white);
 }
 
 .model-card__status[data-status="hidden"] {
   background: var(--green-900-72);
-  color: var(--ivory);
+  color: var(--color-white);
 }
 
 .model-card__main {
@@ -176,8 +177,8 @@
 }
 
 .icon-btn[data-danger="true"]:hover {
-  background: rgb(140 47 22 / 0.09);
-  color: #8c2f16;
+  background: rgb(229 110 93 / 0.14);
+  color: var(--danger-ink);
 }
 
 .icon-btn:disabled {
@@ -213,10 +214,10 @@
   z-index: 5;
   padding: 8px 14px;
   border-radius: var(--r-pill);
-  background: rgb(18 35 27 / 0.82);
+  background: var(--color-primary);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
-  color: var(--ivory-70);
+  color: rgb(255 255 255 / 0.78);
   font-size: var(--fs-11);
   font-weight: 600;
   white-space: nowrap;
@@ -256,7 +257,7 @@
 }
 
 .editor__save-state[data-state="saved"] {
-  color: var(--green-700);
+  color: var(--color-success);
 }
 
 /* The collapse control only means anything once the panel is a bottom sheet. */
@@ -327,7 +328,7 @@
 .input:focus-visible,
 .select:focus-visible,
 .textarea:focus-visible {
-  outline: 2px solid var(--green-700);
+  outline: 2px solid var(--color-action);
   outline-offset: 1px;
 }
 
@@ -363,8 +364,8 @@
 }
 
 .segmented button[data-active="true"] {
-  background: var(--green-900);
-  color: var(--ivory);
+  background: var(--color-action);
+  color: var(--color-white);
 }
 
 .slider-field__head {
@@ -410,8 +411,8 @@ input[type="range"]::-webkit-slider-thumb {
   height: 16px;
   margin-top: -6px;
   border-radius: 50%;
-  background: var(--green-900);
-  box-shadow: 0 1px 3px rgb(7 16 12 / 0.3);
+  background: var(--color-action);
+  box-shadow: 0 1px 3px var(--color-shadow);
   cursor: grab;
 }
 
@@ -420,7 +421,7 @@ input[type="range"]::-moz-range-thumb {
   height: 16px;
   border: 0;
   border-radius: 50%;
-  background: var(--green-900);
+  background: var(--color-action);
   cursor: grab;
 }
 
@@ -443,8 +444,8 @@ input[type="range"]::-moz-range-thumb {
 
 .upload:hover,
 .upload[data-drag="true"] {
-  background: var(--yellow-18);
-  box-shadow: inset 0 0 0 1.5px var(--yellow);
+  background: rgb(217 237 146 / 0.35);
+  box-shadow: inset 0 0 0 1.5px var(--color-highlight);
 }
 
 .upload__icon {
@@ -475,13 +476,13 @@ input[type="range"]::-moz-range-thumb {
 }
 
 .upload-status[data-tone="error"] {
-  background: rgb(140 47 22 / 0.08);
-  color: #8c2f16;
+  background: rgb(229 110 93 / 0.14);
+  color: var(--danger-ink);
 }
 
 .upload-status[data-tone="ready"] {
-  background: rgb(22 71 53 / 0.08);
-  color: var(--green-700);
+  background: rgb(0 98 79 / 0.1);
+  color: var(--color-success);
 }
 
 .upload-status__spin {
@@ -505,7 +506,7 @@ input[type="range"]::-moz-range-thumb {
 
 .upload-progress__fill {
   height: 100%;
-  background: var(--green-700);
+  background: var(--color-action);
   transition: width var(--dur-fast) var(--ease-out);
 }
 
@@ -538,8 +539,8 @@ input[type="range"]::-moz-range-thumb {
 }
 
 .btn--danger {
-  background: #8c2f16;
-  color: var(--ivory);
+  background: var(--color-warning);
+  color: var(--danger-ink);
 }
 
 /* ---- Editor marker ------------------------------------------------------ */
@@ -550,10 +551,12 @@ input[type="range"]::-moz-range-thumb {
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  background: var(--yellow);
-  color: var(--accent-ink);
+  /* The model being placed uses the action blue — it is the thing you are
+     acting on, not a property or a point of interest. */
+  background: var(--color-action);
+  color: var(--color-white);
   box-shadow:
-    0 0 0 3px rgb(18 35 27 / 0.6),
+    0 0 0 3px var(--color-white),
     var(--shadow-md);
   cursor: grab;
 }
@@ -595,4 +598,205 @@ input[type="range"]::-moz-range-thumb {
   .editor__collapse {
     display: grid;
   }
+}
+
+/* ---- Picking a location -------------------------------------------------- */
+/*
+ * A fixed crosshair with a "Place here" button is the most accurate way to
+ * pick a point on a map, because you aim by moving the world rather than by
+ * putting a fingertip on top of the very thing you are aiming at.
+ */
+
+.editor__crosshair {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  z-index: 6;
+  width: 46px;
+  height: 46px;
+  margin: -23px 0 0 -23px;
+  pointer-events: none;
+}
+
+.editor__crosshair::before,
+.editor__crosshair::after {
+  content: "";
+  position: absolute;
+  background: rgb(23 35 29 / 0.55);
+  box-shadow: 0 0 0 1px rgb(255 255 255 / 0.65);
+}
+
+/* Two hairlines that stop short of the centre, leaving the target visible. */
+.editor__crosshair::before {
+  left: 50%;
+  top: 0;
+  width: 1px;
+  height: 14px;
+  margin-left: -0.5px;
+  box-shadow:
+    0 0 0 1px rgb(255 255 255 / 0.65),
+    0 32px 0 rgb(23 35 29 / 0.55);
+}
+
+.editor__crosshair::after {
+  top: 50%;
+  left: 0;
+  height: 1px;
+  width: 14px;
+  margin-top: -0.5px;
+  box-shadow:
+    0 0 0 1px rgb(255 255 255 / 0.65),
+    32px 0 0 rgb(23 35 29 / 0.55);
+}
+
+.editor__crosshair-ring {
+  position: absolute;
+  inset: 15px;
+  border-radius: 50%;
+  border: 1.5px solid var(--color-action);
+  box-shadow:
+    0 0 0 1px var(--color-white),
+    inset 0 0 0 1px var(--color-white);
+}
+
+.editor__tools {
+  position: absolute;
+  left: 50%;
+  top: 14px;
+  z-index: 7;
+  display: flex;
+  gap: 8px;
+  transform: translateX(-50%);
+}
+
+.editor__tools .btn {
+  box-shadow: var(--shadow-md);
+}
+
+.editor__tools .btn--ghost {
+  background: var(--surface-raised);
+}
+
+/* Live position available — the control becomes "take me there". */
+.editor__tool[data-active="true"] {
+  color: var(--color-action);
+  box-shadow:
+    inset 0 0 0 1.5px var(--color-action),
+    var(--shadow-md);
+}
+
+.editor__place-actions {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.editor__place-actions .btn {
+  flex: 1;
+}
+
+/* ---- Context markers ----------------------------------------------------- */
+/*
+ * What is already nearby, drawn quietly: enough to place a model beside the
+ * right doorway, never enough to compete with the model being placed.
+ */
+
+.editor-ref {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  opacity: 0.72;
+  pointer-events: none;
+  white-space: nowrap;
+}
+
+.editor-ref__dot {
+  flex: none;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--marker-color, var(--green-700));
+  box-shadow: 0 0 0 2px var(--surface-raised);
+}
+
+.editor-ref__label {
+  font-size: var(--fs-10);
+  font-weight: 700;
+  color: var(--text-strong);
+  text-shadow:
+    0 1px 2px var(--surface-raised),
+    0 0 4px var(--surface-raised);
+}
+
+.editor-ref[data-family="hotel"] { --marker-color: var(--cat-hotel); }
+.editor-ref[data-family="food"] { --marker-color: var(--cat-food); }
+.editor-ref[data-family="tasting"] { --marker-color: var(--cat-tasting); }
+.editor-ref[data-family="culture"] { --marker-color: var(--cat-culture); }
+.editor-ref[data-family="nature"] { --marker-color: var(--cat-nature); }
+.editor-ref[data-family="active"] { --marker-color: var(--cat-active); }
+
+/* Other models read as objects, not places: a square, and a touch stronger. */
+.editor-ref--model {
+  opacity: 0.85;
+}
+
+.editor-ref--model .editor-ref__dot {
+  border-radius: 3px;
+  background: var(--color-property);
+}
+
+@media (max-width: 900px) {
+  .editor__tools {
+    top: 10px;
+  }
+
+  .editor__tools .btn {
+    font-size: var(--fs-11);
+  }
+}
+
+/* ---- Console sections --------------------------------------------------- */
+
+/*
+ * The console grew a second surface. The section switcher sits in the bar
+ * between the escape hatch and the primary action, so the bar keeps its
+ * three-part rhythm whichever section is open.
+ */
+.admin__sections {
+  display: flex;
+  justify-content: center;
+  gap: 4px;
+  flex: 1;
+}
+
+.admin__section {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 13px;
+  border: none;
+  border-radius: var(--r-pill);
+  background: transparent;
+  color: rgb(255 255 255 / 0.62);
+  font-size: var(--fs-13);
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    background var(--dur-fast) var(--ease-out),
+    color var(--dur-fast) var(--ease-out);
+}
+
+.admin__section:hover {
+  color: var(--color-white);
+  background: rgb(255 255 255 / 0.08);
+}
+
+.admin__section[data-active="true"] {
+  background: rgb(255 255 255 / 0.14);
+  color: var(--color-white);
+}
+
+.admin__section .admin__count {
+  font-size: var(--fs-10);
+  opacity: 0.7;
 }

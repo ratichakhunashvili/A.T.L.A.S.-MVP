@@ -7,11 +7,14 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "preview": "vite preview",
-    "typecheck": "tsc -b --noEmit"
+    "typecheck": "tsc -b --noEmit",
+    "test:e2e": "node tests/enginetests.mjs && node tests/achievements.mjs && node tests/journey.mjs && node tests/hoteldelete.mjs && node tests/interact.mjs && node tests/newfeatures.mjs && node tests/locationtests.mjs && node tests/ladder.mjs && node tests/models-e2e.mjs && node tests/adminpick.mjs && node tests/editor-drag.mjs && node tests/perfprobe.mjs"
   },
   "dependencies": {
+    "@types/qrcode": "^1.5.6",
     "lucide-react": "^0.563.0",
     "mapbox-gl": "^3.18.0",
+    "qrcode": "^1.5.4",
     "react": "^19.2.0",
     "react-dom": "^19.2.0"
   },

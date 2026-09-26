@@ -1,0 +1,307 @@
+/*
+ * Achievements.
+ *
+ * Built from the product palette, and kept deliberately restrained: this is a
+ * hotel keeping a record of where you went, not a game handing out trophies.
+ * The reward is that the sticker looks good, not that it is loud.
+ */
+
+/* ---- Sticker ------------------------------------------------------------ */
+
+.sticker {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  border-radius: 50%;
+  /* A white collar is what separates one sticker from the next when they
+     overlap in the profile stack. */
+  box-shadow:
+    0 0 0 3px var(--color-control),
+    var(--shadow-sm);
+  color: var(--color-white);
+  transition:
+    transform var(--dur-fast) var(--ease-spring),
+    filter var(--dur-fast) var(--ease-out);
+}
+
+.sticker[data-tone="property"] {
+  background: linear-gradient(150deg, var(--color-property), var(--color-primary));
+}
+.sticker[data-tone="highlight"] {
+  background: linear-gradient(150deg, var(--color-highlight), #b9d466);
+  color: var(--cat-culture-ink);
+}
+.sticker[data-tone="success"] {
+  background: linear-gradient(150deg, var(--color-music), var(--color-success));
+}
+.sticker[data-tone="warning"] {
+  background: linear-gradient(150deg, var(--color-warning), #c2503f);
+}
+.sticker[data-tone="music"] {
+  background: linear-gradient(150deg, var(--color-music), #4ea677);
+  color: var(--cat-active-ink);
+}
+
+/* The inner ring. Dashed, so the shape reads as a stamp. */
+.sticker__ring {
+  position: absolute;
+  inset: 13%;
+  border-radius: 50%;
+  border: 1.5px dashed currentColor;
+  opacity: 0.45;
+}
+
+.sticker__art {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.sticker[data-locked="true"] {
+  filter: grayscale(1);
+  opacity: 0.4;
+}
+
+.sticker--empty {
+  background: var(--green-900-05);
+  box-shadow:
+    0 0 0 3px var(--color-control),
+    inset 0 0 0 1.5px var(--hairline);
+}
+
+/* ---- Stack -------------------------------------------------------------- */
+
+.sticker-stack {
+  display: inline-flex;
+  align-items: center;
+}
+
+.sticker-stack__slot {
+  position: relative;
+  display: inline-flex;
+}
+
+/* ---- Toast -------------------------------------------------------------- */
+
+/*
+ * Slides down from the top edge, over the map, above every other overlay —
+ * an unlock can land while a sheet is open and must not be queued behind it.
+ */
+.ach-toast {
+  position: fixed;
+  top: calc(var(--safe-top) + 10px);
+  left: var(--gutter);
+  right: var(--gutter);
+  z-index: 95;
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  max-width: 460px;
+  margin: 0 auto;
+  padding: 13px 14px;
+  border-radius: var(--r-lg);
+  background: var(--color-primary);
+  color: var(--color-white);
+  box-shadow: var(--shadow-lg);
+  transform: translateY(calc(-100% - var(--safe-top) - 24px));
+  opacity: 0;
+  transition:
+    transform var(--dur-panel) var(--ease-spring),
+    opacity var(--dur-fast) var(--ease-out);
+}
+
+.ach-toast[data-active="true"] {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ach-toast {
+    transition-duration: 1ms;
+  }
+}
+
+.ach-toast__body {
+  flex: 1;
+  min-width: 0;
+}
+
+.ach-toast__eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin: 0;
+  font-size: var(--fs-10);
+  font-weight: 700;
+  letter-spacing: var(--tracking-eyebrow);
+  text-transform: uppercase;
+  color: var(--color-highlight);
+}
+
+.ach-toast__title {
+  margin: 3px 0 0;
+  font-size: var(--fs-17);
+  font-weight: 800;
+  line-height: 1.2;
+  letter-spacing: var(--tracking-tight);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ach-toast__where {
+  margin: 2px 0 0;
+  font-size: var(--fs-12);
+  color: var(--text-on-dark-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ach-toast__close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  width: 30px;
+  height: 30px;
+  border: none;
+  border-radius: 50%;
+  background: rgb(255 255 255 / 0.12);
+  color: var(--color-white);
+  cursor: pointer;
+  transition: background var(--dur-fast) var(--ease-out);
+}
+
+.ach-toast__close:hover {
+  background: rgb(255 255 255 / 0.2);
+}
+
+/* ---- Collection grid ---------------------------------------------------- */
+
+.ach-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(96px, 1fr));
+  gap: 12px;
+}
+
+.ach-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 7px;
+  padding: 13px 8px;
+  border: 1.5px solid transparent;
+  border-radius: var(--r-md);
+  background: var(--color-control);
+  box-shadow: var(--ring-hairline);
+  cursor: pointer;
+  text-align: center;
+  transition:
+    border-color var(--dur-fast) var(--ease-out),
+    transform var(--dur-press) var(--ease-out);
+}
+
+.ach-card:active {
+  transform: scale(0.97);
+}
+
+.ach-card[data-selected="true"] {
+  border-color: var(--color-action);
+  background: rgb(24 78 119 / 0.06);
+}
+
+.ach-card[data-locked="true"] {
+  cursor: default;
+  opacity: 0.85;
+}
+
+.ach-card__name {
+  font-size: var(--fs-12);
+  font-weight: 700;
+  line-height: 1.25;
+  letter-spacing: var(--tracking-tight);
+  color: var(--text-strong);
+}
+
+.ach-card__where {
+  font-size: var(--fs-10);
+  color: var(--text-muted);
+}
+
+/* The selection tick, so chosen cards read at a glance. */
+.ach-card__tick {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 19px;
+  height: 19px;
+  border-radius: 50%;
+  background: var(--color-action);
+  color: var(--color-white);
+}
+
+.ach-card {
+  position: relative;
+}
+
+/* ---- Profile entry ------------------------------------------------------ */
+
+.ach-entry {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+  padding: 14px;
+  border: none;
+  border-radius: var(--r-md);
+  background: var(--color-control);
+  box-shadow: var(--ring-hairline);
+  cursor: pointer;
+  text-align: left;
+  transition: box-shadow var(--dur-fast) var(--ease-out);
+}
+
+.ach-entry:hover {
+  box-shadow: var(--ring-hairline), var(--shadow-sm);
+}
+
+.ach-entry__text {
+  flex: 1;
+  min-width: 0;
+}
+
+.ach-entry__label {
+  display: block;
+  font-size: var(--fs-10);
+  font-weight: 700;
+  letter-spacing: var(--tracking-eyebrow);
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.ach-entry__count {
+  display: block;
+  margin-top: 2px;
+  font-size: var(--fs-17);
+  font-weight: 800;
+  letter-spacing: var(--tracking-tight);
+  color: var(--text-strong);
+}
+
+.ach-entry__chevron {
+  flex: none;
+  color: var(--text-faint);
+}
+
+.ach-hint {
+  margin: 10px 0 0;
+  font-size: var(--fs-12);
+  color: var(--text-muted);
+}

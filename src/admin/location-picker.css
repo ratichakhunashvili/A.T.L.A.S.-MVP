@@ -1,0 +1,213 @@
+/*
+ * The map location picker.
+ *
+ * Controls float over the map rather than sitting beside it, so the map keeps
+ * the full width of the form — placing a pin is a spatial task and a bigger
+ * map is a better one.
+ */
+
+.picker {
+  position: relative;
+  width: 100%;
+  border-radius: var(--r-md);
+  overflow: hidden;
+  box-shadow: var(--ring-hairline);
+  background: var(--map-backdrop);
+}
+
+.picker__search {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  right: 10px;
+  z-index: 12;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 6px 6px 11px;
+  border-radius: var(--r-pill);
+  background: var(--color-control);
+  box-shadow: var(--shadow-md);
+  color: var(--text-muted);
+}
+
+.picker__input {
+  flex: 1;
+  min-width: 0;
+  border: none;
+  background: none;
+  font: inherit;
+  font-size: var(--fs-13);
+  color: var(--text-strong);
+  outline: none;
+}
+
+.picker__clear {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border: none;
+  border-radius: 50%;
+  background: var(--green-900-05);
+  color: var(--text-muted);
+  cursor: pointer;
+}
+
+.picker__results {
+  position: absolute;
+  top: 54px;
+  left: 10px;
+  right: 10px;
+  z-index: 13;
+  max-height: 190px;
+  overflow-y: auto;
+  margin: 0;
+  padding: 5px;
+  list-style: none;
+  border-radius: var(--r-md);
+  background: var(--color-control);
+  box-shadow: var(--shadow-lg);
+}
+
+.picker__result {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  width: 100%;
+  padding: 9px 10px;
+  border: none;
+  border-radius: var(--r-sm);
+  background: none;
+  text-align: left;
+  cursor: pointer;
+  color: var(--text-strong);
+  transition: background var(--dur-fast) var(--ease-out);
+}
+
+.picker__result:hover {
+  background: var(--green-900-05);
+}
+
+.picker__result svg {
+  flex: none;
+  margin-top: 2px;
+  color: var(--color-action);
+}
+
+.picker__result strong {
+  display: block;
+  font-size: var(--fs-13);
+  font-weight: 700;
+}
+
+.picker__result em {
+  display: block;
+  font-size: var(--fs-11);
+  font-style: normal;
+  color: var(--text-muted);
+}
+
+/* ---- The pin ------------------------------------------------------------ */
+
+.picker__pin {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px 8px 10px;
+  border: 2px solid var(--color-control);
+  border-radius: var(--r-pill);
+  background: var(--color-action);
+  color: var(--color-white);
+  font-size: var(--fs-12);
+  font-weight: 700;
+  box-shadow: var(--shadow-float);
+  cursor: grab;
+  touch-action: none;
+}
+
+.picker__pin:active {
+  cursor: grabbing;
+  transform: scale(1.04);
+}
+
+.picker__pin-label {
+  max-width: 130px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ---- Reference points --------------------------------------------------- */
+
+.picker__reference {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  pointer-events: none;
+}
+
+.picker__reference-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--color-primary);
+  box-shadow: 0 0 0 2px var(--color-control);
+}
+
+.picker__reference-label {
+  padding: 2px 7px;
+  border-radius: var(--r-pill);
+  background: var(--ivory-88);
+  font-size: var(--fs-10);
+  font-weight: 700;
+  color: var(--color-primary);
+  white-space: nowrap;
+}
+
+/* ---- Tools and readout -------------------------------------------------- */
+
+.picker__tools {
+  position: absolute;
+  left: 10px;
+  bottom: 10px;
+  z-index: 12;
+  display: flex;
+  gap: 6px;
+}
+
+.picker__tool {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 7px 11px;
+  border: none;
+  border-radius: var(--r-pill);
+  background: var(--color-control);
+  box-shadow: var(--shadow-sm);
+  font-size: var(--fs-11);
+  font-weight: 700;
+  color: var(--color-primary);
+  cursor: pointer;
+  transition: background var(--dur-fast) var(--ease-out);
+}
+
+.picker__tool:hover {
+  background: var(--color-control-alt);
+}
+
+.picker__readout {
+  position: absolute;
+  right: 10px;
+  bottom: 10px;
+  z-index: 12;
+  margin: 0;
+  padding: 6px 10px;
+  border-radius: var(--r-pill);
+  background: var(--color-primary);
+  color: var(--color-white);
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: var(--fs-10);
+  font-variant-numeric: tabular-nums;
+}

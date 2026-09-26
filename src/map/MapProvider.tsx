@@ -26,8 +26,8 @@ import {
   LABEL_ZOOM_RULES,
   MAPBOX_STYLE,
   MAPBOX_TOKEN,
-  NIGHT_FOG,
-  NIGHT_LIGHTS,
+  DAY_FOG,
+  DAY_LIGHTS,
   TERRAIN,
   shouldAntialias,
 } from "./config";
@@ -209,13 +209,13 @@ export function MapProvider({
       }
 
       try {
-        map.setFog(NIGHT_FOG);
+        map.setFog(DAY_FOG);
       } catch {
         /* style without atmosphere support */
       }
 
       try {
-        map.setLights(NIGHT_LIGHTS as Parameters<mapboxgl.Map["setLights"]>[0]);
+        map.setLights(DAY_LIGHTS as Parameters<mapboxgl.Map["setLights"]>[0]);
       } catch {
         /* fall back to the preset's own lighting */
       }

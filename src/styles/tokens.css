@@ -1,55 +1,173 @@
 /*
- * Design tokens. Every colour, radius, shadow, type step and motion curve in
- * the product resolves to something declared here — no component invents its
- * own. Four brand colours drive the whole system; the rest are tints of them.
+ * Design tokens — the authoritative colour system.
+ *
+ * Every colour in the product resolves to a `--color-*` token below. Nothing
+ * downstream writes a hex value of its own, so the palette is changed here and
+ * nowhere else.
+ *
+ * The balance the system is built around: large surfaces stay warm and
+ * neutral, and saturated colour is reserved for meaning — navy for the
+ * product's own chrome, blue for actions, green for completion, lime for
+ * discovery, and small amounts of yellow and coral for rating and warning.
  */
 
 :root {
-  /* ---- Brand ---------------------------------------------------------- */
-  --ivory: #f5f1e7;
-  --green-900: #12231b;
-  --green-700: #164735;
-  --yellow: #ffd75a;
+  /* ==================================================================== */
+  /* Authoritative palette                                                */
+  /* ==================================================================== */
 
-  /* ---- Derived neutrals ----------------------------------------------- */
-  /* Ink used for scrims over the map — a desaturated cousin of green-900. */
-  --ink: #0b1512;
-  --ivory-95: rgb(245 241 231 / 0.95);
-  --ivory-88: rgb(245 241 231 / 0.88);
-  --ivory-70: rgb(245 241 231 / 0.7);
-  --ivory-52: rgb(245 241 231 / 0.52);
-  --ivory-34: rgb(245 241 231 / 0.34);
-  --ivory-16: rgb(245 241 231 / 0.16);
-  --ivory-08: rgb(245 241 231 / 0.08);
+  /** Deep navy. Header, status surfaces, property chips. */
+  --color-primary: #00355e;
+  /** Action blue. Scan, GPS, primary buttons, anything you press. */
+  --color-action: #184e77;
+  /** Property blue. Hotel and property markers. */
+  --color-property: #1e6091;
+  /** Completed and success. */
+  --color-success: #00624f;
+  /** Music and event points of interest. */
+  --color-music: #76c893;
+  /** Landmark points of interest, status dots, discovery highlights. */
+  --color-highlight: #d9ed92;
+  /** Ratings and rewards. Used sparingly. */
+  --color-rating: #ffd23d;
+  /** Secondary attractions, warnings, attention. Not overused. */
+  --color-warning: #e56e5d;
+  /** Icons and text on navy or blue. */
+  --color-white: #ffffff;
+  /** Geographic typography on the map. */
+  --color-map-label: #506a67;
+  /** Inactive navigation, secondary text, low-emphasis controls. */
+  --color-nav-muted: #758784;
+  /** Borders, separators, input outlines. */
+  --color-border: #d8ddcf;
+  /** The warm surface of major panels, sheets and the navigation bar. */
+  --color-surface: #fbf8ef;
+  /** Control surfaces: buttons, cards, inputs, compact chips. */
+  --color-control: #fffdf3;
+  --color-control-alt: #fffdf5;
+  /** Primary dark icon colour — not navy, so icons stay quieter than chrome. */
+  --color-icon: #1e4138;
+  /** Primary dark UI text. */
+  --color-text: #17231d;
+  /** Warm shadow, never black. */
+  --color-shadow: rgb(23 56 44 / 0.15);
 
-  --green-900-72: rgb(18 35 27 / 0.72);
-  --green-900-52: rgb(18 35 27 / 0.52);
-  --green-900-38: rgb(18 35 27 / 0.38);
-  --green-900-16: rgb(18 35 27 / 0.16);
-  --green-900-09: rgb(18 35 27 / 0.09);
-  --green-900-05: rgb(18 35 27 / 0.05);
+  /* ==================================================================== */
+  /* Map palette                                                          */
+  /* ==================================================================== */
 
-  --yellow-40: rgb(255 215 90 / 0.4);
-  --yellow-18: rgb(255 215 90 / 0.18);
+  /* Land carries tonal variation rather than one flat fill. */
+  --map-land: #f3eedb;
+  --map-land-light: #fffaea;
+  --map-land-alt: #f1ebd8;
+  --map-water: #83dcec;
+  --map-water-highlight: #b8eef2;
+  /*
+   * Parks take the palette's music green rather than its teal park tones.
+   * The three teals the system lists (#2D96B5, #A2D0DE, #8AC5D6) sit in the
+   * water's own hue family, and Mapbox Standard exposes a single greenspace
+   * colour — so with any of them every park in the city reads as a pond and
+   * the river stops being findable. This keeps the colour inside the stated
+   * palette while letting water stand out. To go back, set --map-green to
+   * one of the teals below and mirror it in src/map/config.ts.
+   */
+  --map-green: #76c893;
+  --map-green-strong: #2d96b5;
+  --map-green-soft: #8ac5d6;
+  --map-route: #7c93ed;
+  --map-road: #fffdf4;
+  --map-road-underlay: #e8dfc8;
+  --map-building: #f2f0e8;
+  --map-roof: #e4e3dd;
+  --map-building-line: #c9cbc5;
+
+  /* ==================================================================== */
+  /* Semantic aliases                                                     */
+  /*                                                                      */
+  /* The names components already use, re-pointed at the palette above.   */
+  /* ==================================================================== */
+
+  --ivory: var(--color-surface);
+  /* Historically the dark surface colour; now the product's navy. */
+  --green-900: var(--color-primary);
+  /* Historically the interactive green; now action blue. */
+  --green-700: var(--color-action);
+  --yellow: var(--color-rating);
+  --coral: var(--color-warning);
+  --mint: var(--color-music);
+  --sky: var(--map-water);
+  --soft-blue: var(--map-water-highlight);
+  --soft-coral: var(--color-warning);
+  --sand: var(--map-land);
+
+  /* What shows behind the map before tiles arrive — a daytime ground tone. */
+  --ink: #04263f;
+  --map-backdrop: var(--map-land);
+
+  --ivory-95: rgb(251 248 239 / 0.95);
+  --ivory-88: rgb(251 248 239 / 0.88);
+  --ivory-70: rgb(251 248 239 / 0.7);
+  --ivory-52: rgb(251 248 239 / 0.52);
+  --ivory-34: rgb(251 248 239 / 0.34);
+  --ivory-16: rgb(251 248 239 / 0.16);
+  --ivory-08: rgb(251 248 239 / 0.08);
+
+  /* Tints of the navy, for states drawn on light surfaces. */
+  --green-900-72: rgb(0 53 94 / 0.72);
+  --green-900-52: rgb(0 53 94 / 0.52);
+  --green-900-38: rgb(0 53 94 / 0.38);
+  --green-900-16: rgb(0 53 94 / 0.16);
+  --green-900-09: rgb(0 53 94 / 0.09);
+  --green-900-05: rgb(0 53 94 / 0.05);
+
+  --yellow-40: rgb(255 210 61 / 0.4);
+  --yellow-18: rgb(255 210 61 / 0.18);
 
   /* ---- Semantic surfaces ---------------------------------------------- */
-  --surface: var(--ivory);
-  --surface-raised: #fbf8f1;
-  --surface-sunken: #ece7d9;
-  --surface-inverse: var(--green-900);
-  --hairline: rgb(18 35 27 / 0.1);
-  --hairline-strong: rgb(18 35 27 / 0.16);
-  --hairline-inverse: rgb(245 241 231 / 0.14);
+  --surface: var(--color-surface);
+  --surface-raised: var(--color-control);
+  --surface-sunken: #f2eee1;
+  --surface-inverse: var(--color-primary);
+  --hairline: var(--color-border);
+  --hairline-strong: #c6cdba;
+  --hairline-inverse: rgb(251 248 239 / 0.2);
 
-  --text-strong: var(--green-900);
-  --text: rgb(18 35 27 / 0.86);
-  --text-muted: rgb(18 35 27 / 0.56);
-  --text-faint: rgb(18 35 27 / 0.38);
-  --text-on-dark: var(--ivory);
-  --text-on-dark-muted: var(--ivory-70);
+  --text-strong: var(--color-text);
+  --text: rgb(23 35 29 / 0.86);
+  --text-muted: var(--color-nav-muted);
+  --text-faint: #9ba7a4;
+  --text-on-dark: var(--color-white);
+  --text-on-dark-muted: rgb(255 255 255 / 0.72);
 
-  --accent: var(--yellow);
-  --accent-ink: #4a3603;
+  --accent: var(--color-rating);
+  /* Ink that stays legible on the rating yellow. */
+  --accent-ink: #4a3703;
+  --danger: var(--color-warning);
+  /* Ink for text on the coral, where white would be too thin. */
+  --danger-ink: #5c1d13;
+
+  /* ---- Marker families -------------------------------------------------- */
+  /*
+   * Nine categories collapse onto the five marker roles the system defines,
+   * because five colours is a legend a guest can hold in their head and nine
+   * is not. `-ink` is whatever stays legible on top of each.
+   */
+  --cat-hotel: var(--color-property);
+  --cat-hotel-ink: var(--color-white);
+  /* Restaurants and tastings are both "secondary attraction". */
+  --cat-food: var(--color-warning);
+  --cat-food-ink: var(--danger-ink);
+  --cat-tasting: var(--color-warning);
+  --cat-tasting-ink: var(--danger-ink);
+  /* Museums and landmarks are the discovery lime. */
+  --cat-culture: var(--color-highlight);
+  --cat-culture-ink: #2f3d16;
+  /* Nature takes the deep green; it is the only other green in the system. */
+  --cat-nature: var(--color-success);
+  --cat-nature-ink: var(--color-white);
+  /* Adventure, entertainment and events share the music green. */
+  --cat-active: var(--color-music);
+  --cat-active-ink: #123a29;
 
   /* ---- Radii ----------------------------------------------------------- */
   --r-xs: 8px;
@@ -61,11 +179,13 @@
   --r-pill: 999px;
 
   /* ---- Elevation ------------------------------------------------------- */
-  /* Two-part shadows: a tight contact shadow plus a wide ambient one. */
-  --shadow-sm: 0 1px 2px rgb(7 16 12 / 0.16), 0 2px 8px rgb(7 16 12 / 0.12);
-  --shadow-md: 0 2px 6px rgb(7 16 12 / 0.18), 0 8px 22px rgb(7 16 12 / 0.18);
-  --shadow-lg: 0 4px 10px rgb(7 16 12 / 0.2), 0 18px 44px rgb(7 16 12 / 0.28);
-  --shadow-float: 0 2px 5px rgb(7 16 12 / 0.22), 0 12px 30px rgb(7 16 12 / 0.24);
+  /* Warm and soft: a hard black shadow on a pale warm map reads as dirt. */
+  --shadow-sm: 0 1px 2px rgb(23 56 44 / 0.08), 0 2px 8px rgb(23 56 44 / 0.1);
+  --shadow-md: 0 2px 6px rgb(23 56 44 / 0.1), 0 8px 22px rgb(23 56 44 / 0.13);
+  --shadow-lg: 0 4px 12px rgb(23 56 44 / 0.12), 0 20px 48px rgb(23 56 44 / 0.15);
+  --shadow-float: 0 2px 6px rgb(23 56 44 / 0.12), 0 10px 26px rgb(23 56 44 / 0.15);
+  /* The edge that keeps a warm surface off a warm map. */
+  --ring-hairline: inset 0 0 0 1px var(--color-border);
 
   /* ---- Type ------------------------------------------------------------ */
   --font-sans: "Plus Jakarta Sans", ui-sans-serif, system-ui, -apple-system,
@@ -82,13 +202,11 @@
   --fs-24: 1.5rem;
   --fs-30: 1.875rem;
 
-  /* Eyebrow/metadata tracking — used for the small uppercase labels. */
   --tracking-eyebrow: 0.09em;
   --tracking-tight: -0.014em;
   --tracking-tighter: -0.024em;
 
   /* ---- Motion ---------------------------------------------------------- */
-  /* Spring-like but non-bouncy: fast start, long gentle settle. */
   --ease-spring: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-out: cubic-bezier(0.22, 0.9, 0.3, 1);
   --ease-in: cubic-bezier(0.5, 0, 0.75, 0);
@@ -108,9 +226,7 @@
 
   --topbar-h: 48px;
   --nav-h: 62px;
-  /* Distance from the bottom edge of the viewport to the nav bar. */
   --nav-gap: 14px;
-  /* Everything the bottom nav occupies, including the home indicator. */
   --nav-occupied: calc(var(--nav-h) + var(--nav-gap) + var(--safe-bottom));
 
   /* ---- Layering -------------------------------------------------------- */

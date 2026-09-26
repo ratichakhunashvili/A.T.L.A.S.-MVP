@@ -21,6 +21,27 @@ import {
 
 import type { NotificationKind, PlaceCategory } from "../data/types";
 
+/**
+ * Markers are coloured by *family*, not by individual category.
+ *
+ * Nine categories would mean nine colours, and nine colours on one map is
+ * noise. Five families — where you sleep, where you eat, what you taste, what
+ * you look at, what you do — is a legend a guest can hold in their head.
+ */
+export type CategoryFamily = "hotel" | "food" | "tasting" | "culture" | "nature" | "active";
+
+export const CATEGORY_FAMILY: Record<PlaceCategory, CategoryFamily> = {
+  hotel: "hotel",
+  restaurant: "food",
+  experience: "tasting",
+  museum: "culture",
+  landmark: "culture",
+  nature: "nature",
+  adventure: "active",
+  entertainment: "active",
+  event: "active",
+};
+
 export const CATEGORY_ICON: Record<PlaceCategory, LucideIcon> = {
   hotel: Hotel,
   restaurant: UtensilsCrossed,
