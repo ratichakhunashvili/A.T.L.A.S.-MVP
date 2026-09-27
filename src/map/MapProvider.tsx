@@ -29,6 +29,7 @@ import {
   DAY_FOG,
   DAY_LIGHTS,
   TERRAIN,
+  prefersReducedMotion,
   shouldAntialias,
 } from "./config";
 import { INITIAL_CAMERA } from "../data/seed";
@@ -92,10 +93,6 @@ interface MapProviderProps {
   camera?: MapCamera;
   /** The arrival move. Off in the admin editor, where it would just be in the way. */
   intro?: boolean;
-}
-
-function prefersReducedMotion(): boolean {
-  return typeof matchMedia === "function" && matchMedia("(prefers-reduced-motion: reduce)").matches;
 }
 
 export function MapProvider({

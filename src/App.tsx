@@ -20,6 +20,9 @@ import { MapProvider, useMap, useMapZoomAbove } from "./map/MapProvider";
 import { MarkerLayer } from "./map/markers/MarkerLayer";
 import { BuildingMask } from "./map/models/BuildingMask";
 import { ModelLayer } from "./map/models/ModelLayer";
+import { FogLayer } from "./map/models/FogLayer";
+import { useModelAssets } from "./map/models/useModelAssets";
+import { useFogState } from "./map/models/useFogState";
 import { TaskLayer } from "./map/TaskLayer";
 import { OverlayManager } from "./overlays/OverlayManager";
 import { BottomNav } from "./ui/chrome/BottomNav";
@@ -59,6 +62,62 @@ function GuestExperience({ scanAttractionId }: GuestExperienceProps) {
     useLocation();
   const { plan, hotel } = useGuest();
   const { unlock, collection } = useAchievements();
+
+  /** Attractions this guest has earned, by attraction id. */
+  const unlockedAttractionIds = useMemo(
+    () =>
+      new Set(
+        collection
+          .map((entry) => entry.attraction?.id)
+          .filter((id): id is string => typeof id === "string"),
+      ),
+    [collection],
+  );
+
+  const { lockedModelIds } = useFogState({ models, unlockedAttractionIds });
+
+  /**
+   * Only the models the guest is allowed to see.
+   *
+   * A locked attraction is filtered out here rather than hidden later, and
+   * that is the whole guarantee against a leak: it never reaches the model
+   * layer, so `useModelAssets` below never fetches its geometry and there is
+   * nothing that could flash into view while the fog is settling.
+   */
+  const renderableModels = useMemo(
+    () => models.filter((model) => !lockedModelIds.has(model.id)),
+    [models, lockedModelIds],
+  );
+
+  /*
+   * Asset resolution, once, for the whole map.
+   *
+   * Nothing draws a model until its bytes have arrived and proved to be a
+   * glTF — which is what lets `BuildingMask` below take the basemap building
+   * out from under a model that is really standing there, and leave the city
+   * intact when an asset turns out to be a 404.
+   */
+  const assets = useModelAssets(renderableModels);
+
+  /** Only the models whose geometry actually loaded. */
+  const loadedModels = useMemo(
+    () => renderableModels.filter((model) => assets.get(model.modelUrl)?.status === "ready"),
+    [renderableModels, assets],
+  );
+
+  /** What each model is doing, for the ground marker to reflect. */
+  const modelStage = useMemo(() => {
+    const stages = new Map<string, "locked" | "pending" | "ready" | "failed">();
+    for (const model of models) {
+      if (lockedModelIds.has(model.id)) {
+        stages.set(model.id, "locked");
+        continue;
+      }
+      const status = assets.get(model.modelUrl)?.status;
+      stages.set(model.id, status === "ready" ? "ready" : status === "failed" ? "failed" : "pending");
+    }
+    return stages;
+  }, [models, lockedModelIds, assets]);
 
   /*
    * Which models stand on somewhere the guest has already been.
@@ -354,6 +413,8 @@ function GuestExperience({ scanAttractionId }: GuestExperienceProps) {
         userLocation={position}
         userQuality={quality}
         visitedModelIds={visitedModelIds}
+        lockedModelIds={lockedModelIds}
+        modelStage={modelStage}
       />
       <TaskLayer
         tasks={mapTasks}
@@ -362,13 +423,35 @@ function GuestExperience({ scanAttractionId }: GuestExperienceProps) {
         hidden={!neighbourhoodZoom}
       />
       <AccuracyRing fix={fix} quality={quality} />
-      {/* Takes the basemap building out from under each custom model. */}
-      <BuildingMask models={models} />
       <ModelLayer
-        models={models}
+        models={renderableModels}
+        assets={assets}
         selectedId={selection?.kind === "model" ? selection.id : null}
         onSelect={(id) => handleSelect({ kind: "model", id })}
       />
+      {/*
+        Takes the basemap building out from under each custom model.
+
+        Mounted after `ModelLayer` on purpose: it positions its own cover
+        layer just below the model layer by id, and that only works reliably
+        if the model layer's id already exists in the style by the time this
+        effect runs — which effect order guarantees when this sits later in
+        the tree, and would otherwise depend on which of the two happened to
+        mount first.
+
+        Given only the models that actually loaded: a mask under a model that
+        is still arriving, or that turned out to be a broken asset, is a hole
+        in the city where a building used to be.
+      */}
+      <BuildingMask models={loadedModels} />
+      {/*
+        The fog over everything this guest has not earned yet.
+
+        Mounted last of the three for the same reason `BuildingMask` is
+        mounted after `ModelLayer`: it inserts its layer just below the model
+        layer by id, which only resolves if that id is already in the style.
+      */}
+      <FogLayer models={models} lockedModelIds={lockedModelIds} />
       <BasemapAnnotations hotel={hotel ? { ...STAY, hotelName: hotel.name } : STAY} places={PLACES} />
 
       <TopBar unreadCount={unreadCount} />

@@ -9,7 +9,7 @@
  */
 
 import { memo } from "react";
-import { Check } from "lucide-react";
+import { Check, Lock } from "lucide-react";
 
 import { MapMarker } from "../MapMarker";
 import { CATEGORY_FAMILY, CATEGORY_ICON } from "../../ui/icons";
@@ -34,6 +34,18 @@ interface MarkerLayerProps {
   userQuality?: FixQuality | null;
   /** Models whose attraction the guest has already collected. */
   visitedModelIds?: Set<string>;
+  /**
+   * Models still concealed under fog.
+   *
+   * These have no geometry on the map at all, so this marker is the only way
+   * to find or select them — it has to stay present and pressable.
+   */
+  lockedModelIds?: Set<string>;
+  /**
+   * Per-model asset stage, so the ground ring can stand down once the real
+   * geometry is standing in its place.
+   */
+  modelStage?: Map<string, "locked" | "pending" | "ready" | "failed">;
 }
 
 function MarkerLayerImpl({
@@ -45,6 +57,8 @@ function MarkerLayerImpl({
   userLocation,
   userQuality,
   visitedModelIds,
+  lockedModelIds,
+  modelStage,
 }: MarkerLayerProps) {
   return (
     <>
@@ -76,7 +90,6 @@ function MarkerLayerImpl({
               data-category={place.category}
               data-tier={tier}
               data-selected={selected}
-              data-unlocked={place.unlocked ?? false}
               data-highlight={place.id === highlightPlaceId && !selected}
               aria-label={
                 distance
@@ -110,6 +123,9 @@ function MarkerLayerImpl({
 
       {models.map((model) => {
         const selected = selection?.kind === "model" && selection.id === model.id;
+        const locked = lockedModelIds?.has(model.id) ?? false;
+        const stage = modelStage?.get(model.id) ?? (locked ? "locked" : "pending");
+
         return (
           <MapMarker
             key={model.id}
@@ -123,16 +139,29 @@ function MarkerLayerImpl({
               className="model-anchor"
               data-selected={selected}
               data-visited={visitedModelIds?.has(model.id) ?? false}
-              aria-label={`${model.name}, 3D model. Open details.`}
+              data-locked={locked}
+              data-stage={stage}
+              aria-label={
+                locked
+                  ? `${model.name}, locked. Photograph it to reveal it. Open details.`
+                  : `${model.name}, 3D model. Open details.`
+              }
               aria-pressed={selected}
               onClick={() => onSelect({ kind: "model", id: model.id })}
             >
               {/* Two rings: one on the ground plane, one spreading out of it.
                   Between them they say "this one is worth walking to" without
-                  taking any more of the map than the old single ring did. */}
+                  taking any more of the map than the old single ring did.
+
+                  Once the real geometry is standing, the rings collapse rather
+                  than unmount: a zero-size button is unreachable by keyboard,
+                  and at a zoom where the model is a few pixels the badge is
+                  still the only thing worth pressing. */}
               <span className="model-anchor__pulse" aria-hidden="true" />
               <span className="model-anchor__ring" />
-              <span className="model-anchor__badge" aria-hidden="true" />
+              <span className="model-anchor__badge" aria-hidden="true">
+                {locked ? <Lock size={7} strokeWidth={3} aria-hidden="true" /> : null}
+              </span>
             </button>
           </MapMarker>
         );

@@ -7,6 +7,7 @@
 
 import { CircleAlert } from "lucide-react";
 
+import { BrandLogo } from "./BrandLogo";
 import { useMapStatus } from "../map/MapProvider";
 
 export function TokenNotice() {
@@ -18,6 +19,7 @@ export function TokenNotice() {
   return (
     <div className="notice-layer">
       <div className="notice">
+        <BrandLogo height={22} className="brand-logo--stacked" />
         <span className="notice__icon">
           <CircleAlert size={20} strokeWidth={2} aria-hidden="true" />
         </span>

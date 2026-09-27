@@ -37,6 +37,8 @@ import { useLocation } from "../state/location";
 import { PLACES } from "../data/seed";
 import { BuildingMask } from "../map/models/BuildingMask";
 import { MODEL_LAYER_ID, ModelLayer } from "../map/models/ModelLayer";
+import { useModelAssets } from "../map/models/useModelAssets";
+import { distanceMetres } from "../data/geo";
 import { modelRepository } from "../data/modelRepository";
 import { useModels } from "../data/useModels";
 import { STAY } from "../data/seed";
@@ -48,6 +50,15 @@ import {
   type ModelStatus,
   type PlaceCategory,
 } from "../data/types";
+
+/**
+ * How close two models have to be before they are treated as overlapping.
+ *
+ * Deliberately generous: most placed assets are buildings, so anything inside
+ * about a dozen metres is going to intersect visibly even if the coordinates
+ * are technically distinct.
+ */
+const COLLISION_M = 12;
 
 /* ------------------------------------------------------------------------ */
 /* Small pieces                                                              */
@@ -398,6 +409,14 @@ export function ModelEditor({ model, onDone }: ModelEditorProps) {
   const [draft, setDraft] = useState<MapModelDraft>(() => (model ? { ...model } : blankDraft()));
   /** True while the next map tap adds a building to the mask. */
   const [pickingBuilding, setPickingBuilding] = useState(false);
+  /*
+   * Three states, not two. `undefined` means "work it out" — the renderer
+   * masks whatever building the model is standing on, which is what is wanted
+   * almost every time. `[]` is an explicit "leave the building alone". A
+   * populated array is exactly those footprints.
+   */
+  const maskAutomatic = draft.hiddenBuildings === undefined;
+  const maskOff = draft.hiddenBuildings?.length === 0;
   const masked = draft.hiddenBuildings ?? [];
   const [recordId, setRecordId] = useState<string | null>(model?.id ?? null);
   const [saveState, setSaveState] = useState<"idle" | "saving" | "saved">("idle");
@@ -547,6 +566,36 @@ export function ModelEditor({ model, onDone }: ModelEditorProps) {
 
   const canSave = draft.name.trim().length > 0 && draft.modelUrl.trim().length > 0;
 
+  /*
+   * The draft plus its live neighbours, as real geometry.
+   *
+   * The preview used to show only the model being placed, so an admin
+   * dropping a second model onto an occupied footprint got no warning at all
+   * — every other model was a muted 2D dot. Drawing the neighbours means the
+   * overlap is visible at the moment it is created. The draft stays selected,
+   * so `ModelLayer`'s existing selection tint is what tells them apart.
+   */
+  const previewModels = useMemo(
+    () => [previewModel, ...otherModels.filter((other) => other.visible && other.status === "published")],
+    [previewModel, otherModels],
+  );
+  const previewAssets = useModelAssets(previewModels);
+
+  /** Only what actually loaded — a mask under a pending asset is a hole. */
+  const loadedPreviewModels = useMemo(
+    () => previewModels.filter((m) => previewAssets.get(m.modelUrl)?.status === "ready"),
+    [previewModels, previewAssets],
+  );
+
+  /**
+   * Anything close enough that the two will visibly intersect. Measured from
+   * stored coordinates, never from where things happen to land on screen.
+   */
+  const collisions = useMemo(
+    () => otherModels.filter((other) => distanceMetres(draft, other) < COLLISION_M),
+    [otherModels, draft],
+  );
+
   return (
     <div className="editor">
       <div className="editor__map">
@@ -559,10 +608,16 @@ export function ModelEditor({ model, onDone }: ModelEditorProps) {
             bearing: -20,
           }}
         >
-          {draft.modelUrl ? <ModelLayer models={[previewModel]} selectedId={null} /> : null}
+          {draft.modelUrl ? (
+            <ModelLayer
+              models={previewModels}
+              assets={previewAssets}
+              selectedId={previewModel.id}
+            />
+          ) : null}
           {/* So "Hide building underneath" shows its effect right where the
              admin is working, instead of only on the published guest map. */}
-          <BuildingMask models={[previewModel]} />
+          <BuildingMask models={loadedPreviewModels} />
           <ReferenceMarkers others={otherModels} />
           <AdminLocation />
           <ModelPlacement
@@ -847,22 +902,20 @@ export function ModelEditor({ model, onDone }: ModelEditorProps) {
               <button
                 type="button"
                 className="btn btn--ghost btn--sm"
-                aria-pressed={masked.length > 0}
+                aria-pressed={!maskOff}
                 onClick={() =>
-                  patch({
-                    hiddenBuildings:
-                      masked.length > 0
-                        ? []
-                        : [{ longitude: draft.longitude, latitude: draft.latitude }],
-                  })
+                  // Back to automatic rather than to an explicit point: the
+                  // model may be moved after this, and a stored coordinate
+                  // would then mask whatever it was left pointing at.
+                  patch({ hiddenBuildings: maskOff ? undefined : [] })
                 }
               >
-                {masked.length > 0 ? (
-                  <Eye size={13} strokeWidth={2.2} aria-hidden="true" />
-                ) : (
+                {maskOff ? (
                   <EyeOff size={13} strokeWidth={2.2} aria-hidden="true" />
+                ) : (
+                  <Eye size={13} strokeWidth={2.2} aria-hidden="true" />
                 )}
-                {masked.length > 0 ? "Show building again" : "Hide building underneath"}
+                {maskOff ? "Hide building underneath" : "Show building again"}
               </button>
 
               <button
@@ -877,11 +930,21 @@ export function ModelEditor({ model, onDone }: ModelEditorProps) {
             </div>
 
             <p className="field__hint">
-              {masked.length === 0
-                ? "The Mapbox building under this model is left visible."
-                : `${masked.length} ${masked.length === 1 ? "building" : "buildings"} hidden under this model. Only these — the rest of the city stays.`}
+              {maskAutomatic
+                ? "The Mapbox building under this model is hidden automatically. Pick another to add more, or show it again to leave the city untouched."
+                : maskOff
+                  ? "The Mapbox building under this model is left visible, so the two may overlap."
+                  : `${masked.length} ${masked.length === 1 ? "building" : "buildings"} hidden under this model. Only these — the rest of the city stays.`}
             </p>
           </div>
+
+          {collisions.length > 0 ? (
+            <p className="field__error">
+              {collisions.length === 1
+                ? `${collisions[0].name} is ${Math.round(distanceMetres(draft, collisions[0]))} m away — they will overlap.`
+                : `${collisions.length} other models are within ${COLLISION_M} m — they will overlap.`}
+            </p>
+          ) : null}
 
           <SliderField
             label="Altitude"

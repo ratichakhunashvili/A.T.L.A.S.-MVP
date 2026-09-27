@@ -1,8 +1,13 @@
-# Guest Map
+# Atlas
 
 The guest-facing screen of the 3D Hospitality Experience Platform: a hotel guest
-opens the app and is already standing on a night map of the city around their
-hotel, with the experiences curated for them placed on it.
+opens the app and is already standing on a map of the city around their hotel,
+with the experiences curated for them placed on it.
+
+Attractions arrive **locked**, concealed under fog. The only way to reveal one
+is to stand in front of the real thing and photograph it — a server compares the
+photo against reference images an operator uploaded, and only a successful
+server-side result unlocks the achievement.
 
 There is one screen. The map **is** the application — everything else is an
 overlay above it, and nothing in the guest experience navigates anywhere.

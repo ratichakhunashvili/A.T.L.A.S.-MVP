@@ -27,6 +27,7 @@ import {
 import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { ReservationScanner } from "./ReservationScanner";
+import { BrandLogo } from "../ui/BrandLogo";
 import { navigate } from "../routing";
 import { resolveHotelToken, recordScan, type TokenFailure } from "../data/repositories/hotels";
 import {
@@ -387,6 +388,7 @@ function previousStep(step: Step): Step {
 function Welcome({ hotel, onNext }: { hotel: Hotel; onNext: () => void }) {
   return (
     <section className="join__card join__card--hero">
+      <BrandLogo height={26} className="brand-logo--stacked" />
       <p className="eyebrow">Welcome to</p>
       <h1 className="join__display">{hotel.name}</h1>
       {hotel.tagline ? <p className="join__body">{hotel.tagline}</p> : null}

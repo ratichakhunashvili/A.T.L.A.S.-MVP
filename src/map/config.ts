@@ -275,3 +275,15 @@ export function shouldAntialias(): boolean {
   if (typeof window === "undefined") return false;
   return (window.devicePixelRatio || 1) < 2;
 }
+
+/**
+ * Whether the viewer has asked for less movement.
+ *
+ * The stylesheet has its own `prefers-reduced-motion` kill switch, but it can
+ * only reach the DOM — a Mapbox paint transition or a camera ease runs inside
+ * the map's render loop and has to be shortened in code. Anything animating on
+ * the map checks this itself.
+ */
+export function prefersReducedMotion(): boolean {
+  return typeof matchMedia === "function" && matchMedia("(prefers-reduced-motion: reduce)").matches;
+}

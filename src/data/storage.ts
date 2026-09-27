@@ -24,6 +24,15 @@ export interface ModelStorageService {
   deleteModel(ref: string): Promise<void>;
   /** Resolves a stored reference to something the renderer can fetch. */
   getModelUrl(ref: string): Promise<string>;
+  /**
+   * The asset's bytes.
+   *
+   * The renderer needs these, not a URL: Mapbox's model layer has no load
+   * event, so the only way to know an asset is really there — and really a
+   * glTF — is to hold it. Having the bytes also means the object URL handed to
+   * Mapbox is created and revoked in one place instead of leaking per layer.
+   */
+  getModelBlob(ref: string, signal?: AbortSignal): Promise<Blob>;
 }
 
 export const LOCAL_REF_PREFIX = "local:";
@@ -128,14 +137,23 @@ class LocalModelStorage implements ModelStorageService {
     const cached = this.urlCache.get(ref);
     if (cached) return cached;
 
+    const url = URL.createObjectURL(await this.getModelBlob(ref));
+    this.urlCache.set(ref, url);
+    return url;
+  }
+
+  async getModelBlob(ref: string, signal?: AbortSignal): Promise<Blob> {
+    if (!isLocalRef(ref)) {
+      const response = await fetch(ref, { signal });
+      if (!response.ok) throw new Error(`${response.status} fetching ${ref}`);
+      return response.blob();
+    }
+
     const asset = await runTransaction<StoredAsset | undefined>("readonly", (store) =>
       store.get(ref.slice(LOCAL_REF_PREFIX.length)),
     );
     if (!asset) throw new Error(`Uploaded asset ${ref} is no longer in local storage`);
-
-    const url = URL.createObjectURL(asset.blob);
-    this.urlCache.set(ref, url);
-    return url;
+    return asset.blob;
   }
 }
 
@@ -170,10 +188,54 @@ export function formatBytes(bytes: number): string {
 }
 
 /**
+ * Checks the container itself.
+ *
+ * Split out from `validateModelFile` so the renderer and the uploader cannot
+ * drift apart on what counts as a valid asset: the uploader refuses a bad file
+ * at the door, and the renderer refuses to hand Mapbox bytes that would become
+ * a silent blank patch on someone's map.
+ *
+ * For `.glb` this reads the 12-byte header — magic, version, and the declared
+ * length, which catches a truncated download. `.gltf` is parsed as JSON and
+ * must carry the required `asset` block.
+ */
+export async function validateModelBytes(
+  blob: Blob,
+  extension: string,
+): Promise<ValidationResult> {
+  if (blob.size === 0) return { ok: false, message: "That file is empty." };
+
+  if (extension === ".glb") {
+    const header = new DataView(await blob.slice(0, 12).arrayBuffer());
+    if (header.byteLength < 12 || header.getUint32(0, true) !== 0x46546c67 /* "glTF" */) {
+      return { ok: false, message: "This is not a valid GLB — the file header is missing." };
+    }
+    const version = header.getUint32(4, true);
+    if (version !== 2) {
+      return { ok: false, message: `GLB version ${version} is not supported. Export as glTF 2.0.` };
+    }
+    const declared = header.getUint32(8, true);
+    if (declared !== blob.size) {
+      return { ok: false, message: "This GLB looks truncated — re-export it and try again." };
+    }
+    return { ok: true, extension };
+  }
+
+  try {
+    const parsed = JSON.parse(await blob.text()) as { asset?: { version?: string } };
+    if (!parsed.asset?.version) {
+      return { ok: false, message: "This .gltf has no asset block — it is not a valid glTF document." };
+    }
+  } catch {
+    return { ok: false, message: "This .gltf could not be parsed as JSON." };
+  }
+
+  return { ok: true, extension };
+}
+
+/**
  * Checks a file before it is allowed anywhere near the public map: extension,
- * size, and — for `.glb` — the container header itself, so a renamed archive
- * or a truncated download is caught here rather than as a silent blank spot on
- * the map. `.gltf` is validated as JSON with the required `asset` block.
+ * size, then the container itself.
  */
 export async function validateModelFile(file: File): Promise<ValidationResult> {
   const extension = extensionOf(file.name);
@@ -185,8 +247,8 @@ export async function validateModelFile(file: File): Promise<ValidationResult> {
     };
   }
 
-  if (file.size === 0) return { ok: false, message: "That file is empty." };
-
+  // Only the upload path enforces a size ceiling: an asset already on the map
+  // is not the moment to start refusing to draw it.
   if (file.size > MAX_MODEL_BYTES) {
     return {
       ok: false,
@@ -194,30 +256,24 @@ export async function validateModelFile(file: File): Promise<ValidationResult> {
     };
   }
 
-  if (extension === ".glb") {
-    const header = new DataView(await file.slice(0, 12).arrayBuffer());
-    if (header.byteLength < 12 || header.getUint32(0, true) !== 0x46546c67 /* "glTF" */) {
-      return { ok: false, message: "This is not a valid GLB — the file header is missing." };
-    }
-    const version = header.getUint32(4, true);
-    if (version !== 2) {
-      return { ok: false, message: `GLB version ${version} is not supported. Export as glTF 2.0.` };
-    }
-    const declared = header.getUint32(8, true);
-    if (declared !== file.size) {
-      return { ok: false, message: "This GLB looks truncated — re-export it and try again." };
-    }
-    return { ok: true, extension };
+  return validateModelBytes(file, extension);
+}
+
+/**
+ * The asset extension a reference implies.
+ *
+ * Local refs carry no filename, so their bytes are sniffed instead — a GLB
+ * starts with the ASCII magic `glTF`, and anything else is treated as JSON.
+ */
+export async function extensionOfRef(ref: string, blob: Blob): Promise<string> {
+  if (!isLocalRef(ref)) {
+    // Strip a query string before looking at the extension: a signed CDN URL
+    // routinely ends in `?sig=…`, which is not a file type.
+    const path = ref.split(/[?#]/)[0];
+    const extension = extensionOf(path);
+    if (extension === ".glb" || extension === ".gltf") return extension;
   }
 
-  try {
-    const parsed = JSON.parse(await file.text()) as { asset?: { version?: string } };
-    if (!parsed.asset?.version) {
-      return { ok: false, message: "This .gltf has no asset block — it is not a valid glTF document." };
-    }
-  } catch {
-    return { ok: false, message: "This .gltf could not be parsed as JSON." };
-  }
-
-  return { ok: true, extension };
+  const magic = new DataView(await blob.slice(0, 4).arrayBuffer());
+  return magic.byteLength >= 4 && magic.getUint32(0, true) === 0x46546c67 ? ".glb" : ".gltf";
 }

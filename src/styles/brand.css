@@ -1,0 +1,20 @@
+/* ---- Brand ------------------------------------------------------------- */
+/*
+ * The Atlas wordmark. The artwork carries its own transparency, so it needs no
+ * plate behind it — but half its letterforms are navy, so it only reads on a
+ * light surface. Do not put it on the navy chrome; use the icon there instead.
+ */
+
+.brand-logo {
+  display: block;
+  width: auto;
+  max-width: 100%;
+  /* Dragging the logo out of the page is never the intent. */
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+/* Centred above a card's own heading, with the spacing of an eyebrow. */
+.brand-logo--stacked {
+  margin: 0 auto 18px;
+}

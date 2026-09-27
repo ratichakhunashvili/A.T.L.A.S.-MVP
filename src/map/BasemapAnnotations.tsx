@@ -19,6 +19,7 @@ import { useEffect } from "react";
 import type { TargetFeature } from "mapbox-gl";
 
 import { useMap } from "./MapProvider";
+import { isOnScreen, searchBox } from "./projection";
 import type { Place } from "../data/types";
 
 const BUILDINGS = { featuresetId: "buildings", importId: "basemap" } as const;
@@ -36,6 +37,17 @@ const KEEP_OUT_Y = 38;
 
 /** Below this the labels are too sparse for collisions to matter. */
 const MIN_ZOOM = 13.5;
+
+/** Standard draws no building footprints below about here. */
+const BUILDING_ZOOM = 15;
+
+/**
+ * Give up after this many *fair* looks — passes where the hotel was actually
+ * on screen at a zoom that draws footprints. A pass that never had a chance
+ * does not count, or a guest who opens the app zoomed out permanently loses
+ * the tint on their own hotel.
+ */
+const MAX_ATTEMPTS = 10;
 
 /**
  * Centre of a building footprint.
@@ -78,19 +90,24 @@ export function BasemapAnnotations({ hotel, places }: BasemapAnnotationsProps) {
     let attempts = 0;
 
     const tryHighlight = () => {
+      if (highlighted) return;
+
+      /*
+       * A pass only counts against the budget if it had a real chance.
+       *
+       * The hotel may be off the edge of the canvas, or the camera may be
+       * wider than the zoom at which Standard draws footprints at all — in
+       * both cases the query is guaranteed to come back empty. Counting those
+       * used to exhaust the ten attempts before the guest had finished the
+       * opening camera move, after which the tint never appeared and never
+       * retried.
+       */
+      if (map.getZoom() < BUILDING_ZOOM) return;
+      if (!isOnScreen(map, hotel, 160)) return;
+
       attempts += 1;
       const centre = map.project([hotel.longitude, hotel.latitude]);
-
-      // Work out what 45 m is in pixels at the current camera, so the search
-      // covers the same piece of ground whatever the zoom.
-      const metreOffset = map.project([hotel.longitude + 0.00045, hotel.latitude]);
-      const pixelsPerMetre = Math.abs(metreOffset.x - centre.x) / 37.5;
-      const radius = Math.min(Math.max(BUILDING_SEARCH_M * pixelsPerMetre, 14), 130);
-
-      const box: [[number, number], [number, number]] = [
-        [centre.x - radius, centre.y - radius],
-        [centre.x + radius, centre.y + radius],
-      ];
+      const box = searchBox(map, hotel, BUILDING_SEARCH_M, { min: 14, max: 130 });
 
       let hits: TargetFeature[] = [];
       try {
@@ -118,22 +135,30 @@ export function BasemapAnnotations({ hotel, places }: BasemapAnnotationsProps) {
         }
 
         if (!best) {
-          if (attempts >= 10) map.off("idle", tryHighlight);
+          if (attempts >= MAX_ATTEMPTS) map.off("idle", tryHighlight);
           return;
         }
 
         highlighted = best;
         map.setFeatureState(highlighted, { highlight: true });
-        map.off("idle", tryHighlight);
-      } else if (attempts >= 10) {
+      } else if (attempts >= MAX_ATTEMPTS) {
         // The hotel may simply not sit on a mapped building. Stop looking.
         map.off("idle", tryHighlight);
       }
     };
 
+    /** A style reload drops feature state, so the tint is re-resolved. */
+    const reset = () => {
+      highlighted = null;
+      attempts = 0;
+      map.on("idle", tryHighlight);
+    };
+
     map.on("idle", tryHighlight);
+    map.on("style.load", reset);
     return () => {
       map.off("idle", tryHighlight);
+      map.off("style.load", reset);
       if (highlighted) {
         try {
           map.removeFeatureState(highlighted);
@@ -142,13 +167,43 @@ export function BasemapAnnotations({ hotel, places }: BasemapAnnotationsProps) {
         }
       }
     };
-  }, [map, hotel.longitude, hotel.latitude]);
+  }, [map, hotel.longitude, hotel.latitude, hotel]);
 
   /* -- Hide basemap POIs that our markers already speak for --------------- */
   useEffect(() => {
     if (!map) return;
-    const hidden: TargetFeature[] = [];
+
+    /**
+     * What is currently suppressed, keyed so it can be released again.
+     *
+     * This used to be an append-only array, which had two consequences: a POI
+     * hidden because it once sat behind a marker stayed hidden forever, even
+     * after the camera moved and nothing overlapped any more; and a style
+     * reload left the array holding features that no longer existed, so the
+     * cleanup on unmount was removing state from ghosts.
+     *
+     * The coordinate is kept alongside the feature because a hidden label
+     * stops being *rendered*, so it never comes back from a query — the only
+     * way to re-test it for a collision is to have remembered where it was.
+     */
+    const hidden = new Map<string, { feature: TargetFeature; at: [number, number] }>();
     let frame = 0;
+
+    const keyOf = (poi: TargetFeature, at: [number, number]) =>
+      poi.id !== undefined && poi.id !== null
+        ? String(poi.id)
+        : `${at[0].toFixed(6)},${at[1].toFixed(6)}`;
+
+    const release = (key: string) => {
+      const entry = hidden.get(key);
+      if (!entry) return;
+      try {
+        map.removeFeatureState(entry.feature);
+      } catch {
+        /* the style may already be gone */
+      }
+      hidden.delete(key);
+    };
 
     const suppress = () => {
       cancelAnimationFrame(frame);
@@ -161,40 +216,49 @@ export function BasemapAnnotations({ hotel, places }: BasemapAnnotationsProps) {
         } catch {
           return;
         }
-        if (pois.length === 0) return;
 
         // Screen space, not ground distance: what matters is whether the two
         // labels overlap in the view, and that changes with zoom and pitch.
         const markers = places.map((place) => map.project([place.longitude, place.latitude]));
-
-        for (const poi of pois) {
-          if (poi.geometry?.type !== "Point") continue;
-          const point = map.project(poi.geometry.coordinates as [number, number]);
-
-          const collides = markers.some(
+        const collides = (at: [number, number]) => {
+          const point = map.project(at);
+          return markers.some(
             (marker) =>
               Math.abs(marker.x - point.x) < KEEP_OUT_X &&
               Math.abs(marker.y - point.y) < KEEP_OUT_Y,
           );
-          if (!collides) continue;
+        };
 
+        for (const poi of pois) {
+          if (poi.geometry?.type !== "Point") continue;
+          const at = poi.geometry.coordinates as [number, number];
+          if (!collides(at)) continue;
+
+          const key = keyOf(poi, at);
+          if (hidden.has(key)) continue;
           map.setFeatureState(poi, { hide: true });
-          hidden.push(poi);
+          hidden.set(key, { feature: poi, at });
+        }
+
+        // Give back anything the markers have moved off.
+        for (const [key, entry] of [...hidden]) {
+          if (!collides(entry.at)) release(key);
         }
       });
     };
 
+    /** A style reload drops every feature state; the bookkeeping goes with it. */
+    const reset = () => {
+      hidden.clear();
+    };
+
     map.on("idle", suppress);
+    map.on("style.load", reset);
     return () => {
       cancelAnimationFrame(frame);
       map.off("idle", suppress);
-      for (const poi of hidden) {
-        try {
-          map.removeFeatureState(poi);
-        } catch {
-          /* map already torn down */
-        }
-      }
+      map.off("style.load", reset);
+      for (const key of [...hidden.keys()]) release(key);
     };
   }, [map, places]);
 

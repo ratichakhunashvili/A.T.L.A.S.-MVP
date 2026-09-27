@@ -382,6 +382,70 @@
   opacity: 0;
 }
 
+/*
+ * Locked, under fog.
+ *
+ * There is no geometry on the map for a locked attraction — the model is never
+ * added and its asset is never fetched — so this marker is the only way to
+ * find one or open it. It has to stay findable and pressable.
+ *
+ * Drawn in the map's own label ink rather than the property blue: present and
+ * legible, clearly not yours yet. The pulse stays, because a locked place is
+ * the most invited thing on the map, but it is slowed so a city full of them
+ * does not throb.
+ */
+.model-anchor[data-locked="true"] .model-anchor__ring {
+  border-style: dashed;
+  border-color: rgb(80 106 103 / 0.72);
+  background: radial-gradient(closest-side, rgb(80 106 103 / 0.16), transparent 70%);
+}
+
+.model-anchor[data-locked="true"] .model-anchor__pulse {
+  border-color: rgb(80 106 103 / 0.5);
+  animation-duration: 5.2s;
+}
+
+.model-anchor[data-locked="true"] .model-anchor__badge {
+  display: grid;
+  place-items: center;
+  width: 14px;
+  height: 14px;
+  margin: -21px 0 0 -7px;
+  background: var(--surface-raised);
+  color: var(--color-map-label);
+  box-shadow: 0 0 0 1.5px rgb(80 106 103 / 0.55);
+}
+
+/*
+ * The model is standing.
+ *
+ * The ring is this app's placeholder for geometry that is not there yet, so
+ * once the real thing has loaded it stands down — collapsed rather than
+ * removed, because a zero-size button cannot be reached by keyboard and the
+ * badge is still the only pressable thing at a zoom where the model is a few
+ * pixels tall.
+ */
+.model-anchor[data-stage="ready"]:not([data-selected="true"]) .model-anchor__ring {
+  opacity: 0;
+  transform: scaleY(0.4) scale(0.55);
+}
+
+.model-anchor[data-stage="ready"] .model-anchor__pulse {
+  animation: none;
+  opacity: 0;
+}
+
+/* The asset never arrived. The ring stays — it is all that marks the spot. */
+.model-anchor[data-stage="failed"] .model-anchor__ring {
+  border-style: dotted;
+  border-color: rgb(229 110 93 / 0.65);
+  background: radial-gradient(closest-side, rgb(229 110 93 / 0.14), transparent 70%);
+}
+
+.model-anchor[data-stage="failed"] .model-anchor__badge {
+  background: var(--color-warning);
+}
+
 /* ---- Guest location ----------------------------------------------------- */
 /*
  * "You are here": an emerald core in a white collar, with one slow ring

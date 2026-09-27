@@ -216,6 +216,12 @@
   --dur-backdrop: 260ms;
   --dur-panel: 340ms;
   --dur-slow: 480ms;
+  /* The fog clearing over a newly unlocked attraction, and settling over a
+     locked one. Mirrored by REVEAL_MS and FOG_IN_MS in map/models/fog.ts,
+     because a Mapbox paint transition cannot read a CSS custom property —
+     change both together. */
+  --dur-reveal: 900ms;
+  --dur-fog-in: 420ms;
 
   /* ---- Layout ---------------------------------------------------------- */
   --gutter: 16px;

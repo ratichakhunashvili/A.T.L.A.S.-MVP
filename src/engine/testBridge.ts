@@ -58,6 +58,7 @@ import {
 } from "../data/repositories/achievements";
 import { dailyPlans } from "../data/repositories/plans";
 import { reservations } from "../data/repositories/guests";
+import { modelRepository } from "../data/modelRepository";
 import { generatePlanForGuest } from "./service";
 
 export interface EngineBridge {
@@ -114,6 +115,13 @@ export interface EngineBridge {
     reservations: typeof reservations;
     dailyPlans: typeof dailyPlans;
     activityEvents: typeof activityEvents;
+    /**
+     * The 3D model registry, for the same reason as the rest: a test that
+     * writes `hospitality-map.models.v1` directly has to reload the page
+     * before the app notices, and one that imports the module gets a second
+     * instance with its own cache.
+     */
+    models: typeof modelRepository;
   };
 }
 
@@ -171,6 +179,7 @@ export function installEngineBridge(): void {
       reservations,
       dailyPlans,
       activityEvents,
+      models: modelRepository,
     },
   };
 }
